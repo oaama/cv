@@ -1,16 +1,15 @@
 
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useFirestore, useCollection } from '@/firebase';
+import { collection, query, orderBy } from 'firebase/firestore';
 import { ProjectCard } from './ProjectCard';
-import { getProjects, Project } from '@/lib/project-store';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]);
-
-  useEffect(() => {
-    setProjects(getProjects());
-  }, []);
+  const db = useFirestore();
+  const projectsQuery = db ? query(collection(db, 'projects'), orderBy('createdAt', 'desc')) : null;
+  const { data: projects, loading } = useCollection(projectsQuery);
 
   return (
     <section id="projects" className="py-24">
@@ -31,11 +30,24 @@ export function Projects() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-[400px] rounded-3xl" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects?.map((project: any) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+            {projects?.length === 0 && (
+              <p className="col-span-full text-center py-20 text-muted-foreground">
+                No projects added yet. Check back soon!
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

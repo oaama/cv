@@ -1,8 +1,9 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Globe, Smartphone, Code2 } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
@@ -10,7 +11,6 @@ const navLinks = [
   { name: 'Projects', href: '#projects' },
   { name: 'Stack', href: '#stack' },
   { name: 'Contact', href: '#contact' },
-  { name: 'Admin', href: '/admin' },
 ];
 
 export function Navbar() {
@@ -30,7 +30,7 @@ export function Navbar() {
           <div className="px-3 h-10 bg-primary flex items-center justify-center rounded-xl rotate-3 group-hover:rotate-12 transition-transform shadow-lg shadow-primary/20">
             <span className="font-headline font-bold text-white text-xl">Eng</span>
           </div>
-          <span className="font-headline font-bold text-xl tracking-tighter">ANGELO</span>
+          <span className="font-headline font-bold text-xl tracking-tighter uppercase">ANGELO</span>
         </Link>
 
         {/* Desktop Links */}
