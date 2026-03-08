@@ -1,8 +1,7 @@
-
 "use client"
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Download, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 
 export function Hero() {
@@ -34,7 +33,7 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl leading-relaxed"
           >
-            I build modern websites and powerful mobile applications. Founder of Techno Media & Zone A Workspace.
+            I build modern websites and powerful mobile applications. Founder of Zone A & Sidra.
           </motion.p>
 
           <motion.div

@@ -1,21 +1,20 @@
-
 "use client"
 
 import { motion } from 'framer-motion';
-import { Building2, GraduationCap, Code2, Rocket } from 'lucide-react';
+import { Building2, GraduationCap, Rocket, Sparkles } from 'lucide-react';
 
 const ventures = [
   {
     icon: <Building2 className="text-primary" size={24} />,
-    title: "Techno Media",
+    title: "Zone A",
     role: "Founder & CEO",
-    description: "Digital agency focused on delivering high-end web and mobile solutions to global clients."
+    description: "An integrated software house and tech academy empowering businesses and the next generation of developers."
   },
   {
-    icon: <GraduationCap className="text-primary" size={24} />,
-    title: "Zone A",
+    icon: <Sparkles className="text-primary" size={24} />,
+    title: "Sidra",
     role: "Founder",
-    description: "Tech academy and workspace empowering the next generation of developers through hands-on projects."
+    description: "Innovative tech venture focused on driving digital transformation through cutting-edge solutions."
   }
 ];
 
@@ -40,7 +39,7 @@ export function About() {
                 I am a Software Engineer based in Egypt, specializing in crafting premium web experiences and cross-platform mobile applications using Flutter.
               </p>
               <p>
-                My journey isn't just about writing code; it's about building ecosystems. Through <span className="text-foreground font-semibold">Techno Media</span>, I help businesses scale digital landscapes. Through <span className="text-foreground font-semibold">Zone A</span>, I cultivate talent in the tech industry.
+                My journey isn't just about writing code; it's about building ecosystems. Through <span className="text-foreground font-semibold">Zone A</span>, I provide cutting-edge software solutions and cultivate tech talent. Through <span className="text-foreground font-semibold">Sidra</span>, I drive innovation in the digital landscape.
               </p>
             </div>
 
