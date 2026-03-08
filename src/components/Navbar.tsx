@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -28,8 +27,8 @@ export function Navbar() {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'glass py-3' : 'bg-transparent py-5'}`}>
       <div className="container mx-auto px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-xl rotate-3 group-hover:rotate-12 transition-transform shadow-lg shadow-primary/20">
-            <span className="font-headline font-bold text-white text-xl">A</span>
+          <div className="px-3 h-10 bg-primary flex items-center justify-center rounded-xl rotate-3 group-hover:rotate-12 transition-transform shadow-lg shadow-primary/20">
+            <span className="font-headline font-bold text-white text-xl">Eng</span>
           </div>
           <span className="font-headline font-bold text-xl tracking-tighter">ANGELO</span>
         </Link>
