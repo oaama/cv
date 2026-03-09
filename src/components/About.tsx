@@ -48,7 +48,7 @@ export function About() {
               </motion.div>
             )}
 
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-headline font-bold mb-6 md:mb-8 tracking-tight uppercase px-2">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-headline font-bold mb-6 md:mb-8 tracking-tight uppercase px-2 text-gradient">
               {data.about.title}
             </h2>
             <div className="space-y-4 md:space-y-6 text-muted-foreground text-sm md:text-lg leading-relaxed max-w-2xl mx-auto px-4">
