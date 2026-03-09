@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -23,17 +23,25 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Sparkles, Image as ImageIcon, Upload, Loader2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { getPortfolioData, savePortfolioData, PortfolioData, TechItem, Venture, Project } from '@/lib/portfolio-store';
 import { getTechIcon } from '@/lib/icons';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useStorage } from '@/firebase';
 
 export default function DashAdminPage() {
   const router = useRouter();
+  const storage = useStorage();
   const [data, setData] = useState<PortfolioData | null>(null);
   const [newTechCategory, setNewTechCategory] = useState<TechItem['category']>('Web');
   const [techInput, setTechInput] = useState('');
+  const [isUploading, setIsUploading] = useState<string | null>(null);
   
+  const heroFileRef = useRef<HTMLInputElement>(null);
+  const aboutFileRef = useRef<HTMLInputElement>(null);
+  const projectFileRef = useRef<HTMLInputElement>(null);
+
   // Project Form State
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
@@ -79,6 +87,32 @@ export default function DashAdminPage() {
     const newVentures = [...data.about.ventures];
     newVentures[index] = { ...newVentures[index], [field]: value };
     persistData({ ...data, about: { ...data.about, ventures: newVentures } });
+  };
+
+  const handleFileUpload = async (file: File, path: string, onComplete: (url: string) => void) => {
+    if (!storage) {
+      toast({ title: "Storage Error", description: "Firebase Storage is not initialized.", variant: "destructive" });
+      return;
+    }
+    
+    setIsUploading(path);
+    const storageRef = ref(storage, `portfolio/${path}/${Date.now()}_${file.name}`);
+    
+    try {
+      const snapshot = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(snapshot.ref);
+      onComplete(url);
+      toast({ title: "Upload Success", description: "Image uploaded successfully." });
+    } catch (error: any) {
+      console.error(error);
+      toast({ 
+        title: "Upload Failed", 
+        description: error.message || "Make sure Firebase Storage rules are set to public for development.", 
+        variant: "destructive" 
+      });
+    } finally {
+      setIsUploading(null);
+    }
   };
 
   const handleSaveProject = () => {
@@ -148,16 +182,40 @@ export default function DashAdminPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Hero Image URL</label>
-                <div className="flex gap-4">
-                  <Input 
-                    value={data.hero.imageUrl || ''} 
-                    onChange={e => updateHero('imageUrl', e.target.value)} 
-                    placeholder="https://..." 
-                    className="bg-white/5 border-white/10 h-12" 
-                  />
-                  <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    {data.hero.imageUrl ? <img src={data.hero.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={20} className="text-muted-foreground" />}
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Hero Image</label>
+                <div className="flex gap-4 items-center">
+                  <div className="flex-grow space-y-2">
+                    <Input 
+                      value={data.hero.imageUrl || ''} 
+                      onChange={e => updateHero('imageUrl', e.target.value)} 
+                      placeholder="Image URL or upload a file" 
+                      className="bg-white/5 border-white/10 h-12" 
+                    />
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="secondary" 
+                        size="sm" 
+                        className="rounded-xl h-10 px-4 gap-2"
+                        onClick={() => heroFileRef.current?.click()}
+                        disabled={isUploading === 'hero'}
+                      >
+                        {isUploading === 'hero' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={16}/>}
+                        {isUploading === 'hero' ? 'Uploading...' : 'Upload Image'}
+                      </Button>
+                      <input 
+                        type="file" 
+                        ref={heroFileRef} 
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileUpload(file, 'hero', (url) => updateHero('imageUrl', url));
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {data.hero.imageUrl ? <img src={data.hero.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={32} className="text-muted-foreground" />}
                   </div>
                 </div>
               </div>
@@ -178,11 +236,40 @@ export default function DashAdminPage() {
                      <Input value={data.about.title} onChange={e => updateAbout('title', e.target.value)} className="bg-white/5 border-white/10 h-12" />
                    </div>
                    <div className="space-y-2">
-                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Secondary Image URL (About)</label>
-                     <div className="flex gap-2">
-                        <Input value={data.about.imageUrl || ''} onChange={e => updateAbout('imageUrl', e.target.value)} className="bg-white/5 border-white/10 h-12" placeholder="https://..." />
-                        <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
-                          {data.about.imageUrl ? <img src={data.about.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={20} className="text-muted-foreground" />}
+                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">About Image (Above Text)</label>
+                     <div className="flex gap-4 items-center">
+                        <div className="flex-grow space-y-2">
+                          <Input 
+                            value={data.about.imageUrl || ''} 
+                            onChange={e => updateAbout('imageUrl', e.target.value)} 
+                            className="bg-white/5 border-white/10 h-12" 
+                            placeholder="Image URL or upload a file" 
+                          />
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              variant="secondary" 
+                              size="sm" 
+                              className="rounded-xl h-10 px-4 gap-2"
+                              onClick={() => aboutFileRef.current?.click()}
+                              disabled={isUploading === 'about'}
+                            >
+                              {isUploading === 'about' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={16}/>}
+                              {isUploading === 'about' ? 'Uploading...' : 'Upload Image'}
+                            </Button>
+                            <input 
+                              type="file" 
+                              ref={aboutFileRef} 
+                              className="hidden" 
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleFileUpload(file, 'about', (url) => updateAbout('imageUrl', url));
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {data.about.imageUrl ? <img src={data.about.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={24} className="text-muted-foreground" />}
                         </div>
                      </div>
                    </div>
@@ -407,7 +494,31 @@ export default function DashAdminPage() {
                       </div>
                       <div className="grid gap-4">
                         <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Thumbnail URL</label>
-                        <Input placeholder="https://..." value={projectForm.image} onChange={e => setProjectForm({...projectForm, image: e.target.value})} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                        <div className="space-y-2">
+                          <Input placeholder="https://..." value={projectForm.image} onChange={e => setProjectForm({...projectForm, image: e.target.value})} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              variant="secondary" 
+                              size="sm" 
+                              className="rounded-xl h-10 px-4 gap-2"
+                              onClick={() => projectFileRef.current?.click()}
+                              disabled={isUploading === 'project'}
+                            >
+                              {isUploading === 'project' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={16}/>}
+                              {isUploading === 'project' ? 'Uploading...' : 'Upload File'}
+                            </Button>
+                            <input 
+                              type="file" 
+                              ref={projectFileRef} 
+                              className="hidden" 
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleFileUpload(file, 'project', (url) => setProjectForm({...projectForm, image: url}));
+                              }}
+                            />
+                          </div>
+                        </div>
                       </div>
                    </div>
 
