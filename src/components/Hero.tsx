@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -72,35 +71,49 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-background">
-      {/* Aesthetic Background Elements */}
+      {/* Aesthetic Background Elements - Intensified */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <motion.div 
           animate={{ 
-            x: [0, 100, 0],
-            y: [0, 50, 0],
-            scale: [1, 1.2, 1]
+            x: [0, 150, 0],
+            y: [0, 100, 0],
+            scale: [1, 1.4, 1],
+            opacity: [0.15, 0.3, 0.15]
           }}
           transition={{ 
-            duration: 20, 
+            duration: 15, 
             repeat: Infinity, 
-            ease: "linear" 
+            ease: "easeInOut" 
           }}
-          className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full"
+          className="absolute -top-[10%] -left-[10%] w-[60%] h-[60%] bg-primary/20 blur-[130px] rounded-full"
         />
         <motion.div 
           animate={{ 
-            x: [0, -80, 0],
-            y: [0, 100, 0],
-            scale: [1, 1.1, 1]
+            x: [0, -120, 0],
+            y: [0, 150, 0],
+            scale: [1, 1.3, 1],
+            opacity: [0.1, 0.25, 0.1]
           }}
           transition={{ 
-            duration: 25, 
+            duration: 18, 
             repeat: Infinity, 
-            ease: "linear" 
+            ease: "easeInOut" 
           }}
-          className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-accent/5 blur-[100px] rounded-full"
+          className="absolute top-[20%] -right-[15%] w-[50%] h-[50%] bg-accent/15 blur-[110px] rounded-full"
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0)_0%,rgba(10,14,18,0.5)_100%)]" />
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.05, 0.15, 0.05]
+          }}
+          transition={{ 
+            duration: 10, 
+            repeat: Infinity, 
+            ease: "easeInOut" 
+          }}
+          className="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] bg-primary/10 blur-[100px] rounded-full"
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0)_0%,rgba(10,14,18,0.7)_100%)]" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
