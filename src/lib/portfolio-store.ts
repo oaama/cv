@@ -28,6 +28,7 @@ export interface PortfolioData {
     name: string;
     specialty: string;
     bio: string;
+    imageUrl?: string;
   };
   about: {
     title: string;
@@ -47,20 +48,21 @@ export interface PortfolioData {
   };
 }
 
-const STORAGE_KEY = 'apex_portfolio_complete_data_v5';
+const STORAGE_KEY = 'apex_portfolio_complete_data_v6';
 
 const initialData: PortfolioData = {
   hero: {
     name: "Angelo",
     specialty: "Web & Flutter",
-    bio: "I build modern websites and powerful mobile applications. Founder of Zone A & Sidra."
+    bio: "I build modern websites and powerful mobile applications. Founder of Zone A & Sidra.",
+    imageUrl: "https://picsum.photos/seed/angelo-hero/800/800"
   },
   about: {
     title: "Driven by Innovation, Led by Passion.",
     bio: "I am a Software Engineer based in Egypt, specializing in crafting premium web experiences and cross-platform mobile applications using Flutter. My journey is about building ecosystems through Zone A and driving innovation with Sidra.",
     experienceTitle: "Since 2022",
     experienceSub: "Developing Excellence",
-    imageUrl: "https://picsum.photos/seed/angelo/800/800",
+    imageUrl: "https://picsum.photos/seed/angelo-about/800/800",
     ventures: [
       {
         title: "Zone A",

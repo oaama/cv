@@ -148,6 +148,20 @@ export default function DashAdminPage() {
                 </div>
               </div>
               <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Hero Image URL</label>
+                <div className="flex gap-4">
+                  <Input 
+                    value={data.hero.imageUrl || ''} 
+                    onChange={e => updateHero('imageUrl', e.target.value)} 
+                    placeholder="https://..." 
+                    className="bg-white/5 border-white/10 h-12" 
+                  />
+                  <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {data.hero.imageUrl ? <img src={data.hero.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={20} className="text-muted-foreground" />}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Hero Bio</label>
                 <Textarea value={data.hero.bio} onChange={e => updateHero('bio', e.target.value)} rows={4} className="bg-white/5 border-white/10" />
               </div>
@@ -164,7 +178,7 @@ export default function DashAdminPage() {
                      <Input value={data.about.title} onChange={e => updateAbout('title', e.target.value)} className="bg-white/5 border-white/10 h-12" />
                    </div>
                    <div className="space-y-2">
-                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Profile Image URL</label>
+                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Secondary Image URL (About)</label>
                      <div className="flex gap-2">
                         <Input value={data.about.imageUrl || ''} onChange={e => updateAbout('imageUrl', e.target.value)} className="bg-white/5 border-white/10 h-12" placeholder="https://..." />
                         <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
