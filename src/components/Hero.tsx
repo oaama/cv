@@ -19,6 +19,56 @@ export function Hero() {
 
   if (!data) return null;
 
+  // Typing animation variants
+  const container = {
+    hidden: { opacity: 0 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      transition: { staggerChildren: 0.05, delayChildren: 0.04 * i },
+    }),
+  };
+
+  const child = {
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100,
+      },
+    },
+    hidden: {
+      opacity: 0,
+      x: -20,
+      y: 10,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100,
+      },
+    },
+  };
+
+  const AnimatedText = ({ text, className }: { text: string; className?: string }) => {
+    return (
+      <motion.span
+        variants={container}
+        initial="hidden"
+        animate="visible"
+        className={className}
+        style={{ display: 'inline-block' }}
+      >
+        {text.split("").map((char, index) => (
+          <motion.span variants={child} key={index} style={{ display: 'inline-block' }}>
+            {char === " " ? "\u00A0" : char}
+          </motion.span>
+        ))}
+      </motion.span>
+    );
+  };
+
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
       <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full -z-10" />
@@ -36,10 +86,13 @@ export function Hero() {
                 <Sparkles size={14} /> Software Engineer
               </span>
             </span>
+            
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-headline font-bold leading-[0.9] mb-8 tracking-tighter">
-              {data.hero.name} <br />
-              <span className="text-muted-foreground">Specialist in</span> <br />
-              <span className="text-gradient">{data.hero.specialty}</span>
+              <AnimatedText text={data.hero.name} /> <br />
+              <span className="text-muted-foreground">
+                <AnimatedText text="Specialist in" />
+              </span> <br />
+              <AnimatedText text={data.hero.specialty} className="text-gradient" />
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-xl leading-relaxed">
@@ -89,7 +142,6 @@ export function Hero() {
                 )}
               </div>
               
-              {/* Floating Decorative Badge */}
               <div className="absolute -bottom-6 -right-6 glass p-6 rounded-3xl border-white/10 shadow-2xl animate-bounce duration-[3000ms]">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
