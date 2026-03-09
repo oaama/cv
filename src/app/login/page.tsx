@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
-import { Lock, Sparkles, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Lock, Sparkles, ShieldCheck } from 'lucide-react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 
 export default function LoginPage() {
@@ -60,7 +60,7 @@ export default function LoginPage() {
       console.error(error);
       let message = "Invalid credentials.";
       if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-        message = "No user found with these credentials. Make sure you created the user in Firebase Console.";
+        message = "No user found with these credentials.";
       } else if (error.code === 'auth/invalid-api-key') {
         message = "Firebase API Key is invalid. Check your config.";
       }
@@ -187,13 +187,6 @@ export default function LoginPage() {
                 </Button>
               </motion.div>
             </form>
-
-            <div className="mt-8 p-4 rounded-2xl bg-primary/5 border border-primary/10 flex gap-3 items-start">
-              <AlertCircle className="text-primary shrink-0 mt-0.5" size={18} />
-              <div className="text-[11px] text-muted-foreground leading-relaxed">
-                <span className="text-primary font-bold">First time?</span> Go to your Firebase Console &gt; Authentication &gt; Users to create your admin credentials.
-              </div>
-            </div>
           </CardContent>
           
           <div className="p-8 text-center border-t border-white/5 bg-white/[0.02]">
