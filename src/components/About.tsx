@@ -29,9 +29,7 @@ export function About() {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-primary/20 rounded-full blur-3xl -z-10" />
-            
-            {/* restored Image above title */}
+            {/* الصورة فوق كلمة DRIVEN كما طلبت */}
             {data.about.imageUrl && (
               <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -39,20 +37,19 @@ export function About() {
                 viewport={{ once: true }}
                 className="mb-10 inline-block relative"
               >
-                <div className="w-40 h-40 rounded-full border-4 border-white/10 overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
+                <div className="w-40 h-40 rounded-full border-4 border-white/10 overflow-hidden shadow-2xl hover:scale-105 transition-transform duration-500">
                   <Image 
                     src={data.about.imageUrl} 
                     alt="Angelo" 
                     width={160} 
                     height={160} 
                     className="object-cover w-full h-full"
-                    data-ai-hint="man face"
                   />
                 </div>
               </motion.div>
             )}
 
-            <h2 className="text-4xl md:text-5xl font-headline font-bold mb-8 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-headline font-bold mb-8 tracking-tight uppercase">
               {data.about.title}
             </h2>
             <div className="space-y-6 text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto">
