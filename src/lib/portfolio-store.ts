@@ -1,3 +1,4 @@
+
 "use client"
 
 export interface Venture {
@@ -14,7 +15,6 @@ export interface Project {
   image: string;
   demo: string;
   github: string;
-  drive: string;
 }
 
 export interface TechItem {
@@ -34,8 +34,6 @@ export interface PortfolioData {
     title: string;
     bio: string;
     ventures: Venture[];
-    experienceTitle: string;
-    experienceSub: string;
     imageUrl?: string;
   };
   projects: Project[];
@@ -48,7 +46,7 @@ export interface PortfolioData {
   };
 }
 
-const STORAGE_KEY = 'apex_portfolio_complete_data_v6';
+const STORAGE_KEY = 'apex_portfolio_complete_data_v7';
 
 const initialData: PortfolioData = {
   hero: {
@@ -59,9 +57,7 @@ const initialData: PortfolioData = {
   },
   about: {
     title: "Driven by Innovation, Led by Passion.",
-    bio: "I am a Software Engineer based in Egypt, specializing in crafting premium web experiences and cross-platform mobile applications using Flutter. My journey is about building ecosystems through Zone A and driving innovation with Sidra.",
-    experienceTitle: "Since 2022",
-    experienceSub: "Developing Excellence",
+    bio: "I am a Software Engineer based in Egypt, specializing in crafting premium web experiences and cross-platform mobile applications using Flutter.",
     imageUrl: "https://picsum.photos/seed/angelo-about/800/800",
     ventures: [
       {
@@ -84,8 +80,7 @@ const initialData: PortfolioData = {
       tech: "Flutter, Firebase, Dart",
       image: "https://picsum.photos/seed/88/800/600",
       demo: "https://example.com",
-      github: "https://github.com",
-      drive: ""
+      github: "https://github.com"
     }
   ],
   techStack: [
@@ -97,7 +92,7 @@ const initialData: PortfolioData = {
   contact: {
     email: "angluosr@gmail.com",
     whatsapp: "01127570256",
-    linkedin: "https://www.linkedin.com/in/angluos-rezq-4405b221a?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+    linkedin: "https://linkedin.com",
     github: "@oaama"
   }
 };
