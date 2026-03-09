@@ -70,7 +70,7 @@ export function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-background">
+    <section className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden bg-background">
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-5xl">
           <motion.div
@@ -79,7 +79,7 @@ export function Hero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-left"
           >
-            <h1 className="text-5xl md:text-7xl lg:text-9xl font-headline font-bold leading-[0.9] mb-8 tracking-tighter">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-headline font-bold leading-[1.1] md:leading-[0.9] mb-6 md:mb-8 tracking-tighter">
               <AnimatedText text={data.hero.name} /> <br />
               <span className="text-muted-foreground">
                 <AnimatedText text="Specialist in" />
@@ -87,21 +87,21 @@ export function Hero() {
               <AnimatedText text={data.hero.specialty} className="text-gradient" />
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl leading-relaxed">
+            <p className="text-base md:text-xl text-muted-foreground mb-10 md:mb-12 max-w-2xl leading-relaxed">
               {data.hero.bio}
             </p>
 
-            <div className="flex flex-wrap gap-4 justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-start">
               <Link 
                 href="/#projects" 
-                className="group flex items-center gap-2 px-10 py-5 bg-primary text-white rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
+                className="group flex items-center justify-center gap-2 px-8 md:px-10 py-4 md:py-5 bg-primary text-white rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
               >
                 View Projects
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link 
                 href="/#contact" 
-                className="flex items-center gap-2 px-10 py-5 bg-secondary text-foreground border border-white/5 rounded-2xl font-bold transition-all hover:bg-white/10"
+                className="flex items-center justify-center gap-2 px-8 md:px-10 py-4 md:py-5 bg-secondary text-foreground border border-white/5 rounded-2xl font-bold transition-all hover:bg-white/10"
               >
                 Contact Me
               </Link>
