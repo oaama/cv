@@ -10,6 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { 
   Table, 
   TableBody, 
   TableCell, 
@@ -17,13 +24,14 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Plus, Trash2, Edit, LogOut, Save, User, Briefcase, Cpu, Phone } from 'lucide-react';
+import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { getPortfolioData, savePortfolioData, PortfolioData, Project, TechItem, Venture } from '@/lib/portfolio-store';
+import { getPortfolioData, savePortfolioData, PortfolioData, TechItem, Venture, Project } from '@/lib/portfolio-store';
 
 export default function DashAdminPage() {
   const router = useRouter();
   const [data, setData] = useState<PortfolioData | null>(null);
+  const [newTechCategory, setNewTechCategory] = useState<TechItem['category']>('Web');
   
   // Project Form State
   const [isAddingProject, setIsAddingProject] = useState(false);
@@ -214,20 +222,26 @@ export default function DashAdminPage() {
           <TabsContent value="tech">
             <div className="glass p-10 rounded-[2.5rem] border-white/10 space-y-8">
               <h3 className="text-2xl font-headline font-bold">Manage Tech Stack</h3>
-              <div className="flex gap-4">
-                <Input id="tech-name" placeholder="Tool Name (e.g. Next.js)" className="max-w-xs" />
-                <select id="tech-cat" className="bg-white/5 border border-white/10 rounded-xl px-4 text-sm">
-                  <option value="Web">Web</option>
-                  <option value="Mobile">Mobile</option>
-                  <option value="Backend">Backend</option>
-                  <option value="Cloud">Cloud</option>
-                </select>
+              <div className="flex gap-4 items-center">
+                <Input id="tech-name" placeholder="Tool Name (e.g. Next.js)" className="max-w-xs h-12 bg-white/5 border-white/10 rounded-xl" />
+                
+                <Select value={newTechCategory} onValueChange={(v) => setNewTechCategory(v as TechItem['category'])}>
+                  <SelectTrigger className="w-[180px] h-12 bg-white/5 border-white/10 rounded-xl">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent className="glass border-white/10">
+                    <SelectItem value="Web">Web</SelectItem>
+                    <SelectItem value="Mobile">Mobile</SelectItem>
+                    <SelectItem value="Backend">Backend</SelectItem>
+                    <SelectItem value="Cloud">Cloud</SelectItem>
+                  </SelectContent>
+                </Select>
+
                 <Button onClick={() => {
                   const n = (document.getElementById('tech-name') as HTMLInputElement).value;
-                  const c = (document.getElementById('tech-cat') as HTMLSelectElement).value as any;
-                  addTech(n, c);
+                  addTech(n, newTechCategory);
                   (document.getElementById('tech-name') as HTMLInputElement).value = '';
-                }}>Add</Button>
+                }} className="h-12 px-8 rounded-xl bg-primary">Add Tool</Button>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {data.techStack.map(t => (
