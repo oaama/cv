@@ -71,15 +71,6 @@ export function Hero() {
           </motion.div>
         </div>
       </div>
-
-      <motion.div 
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted-foreground flex flex-col items-center gap-2"
-      >
-        <span className="text-xs uppercase tracking-widest font-bold">Scroll Down</span>
-        <ChevronDown size={20} />
-      </motion.div>
     </section>
   );
 }
