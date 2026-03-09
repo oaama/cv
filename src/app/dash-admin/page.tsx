@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -24,7 +23,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Search } from 'lucide-react';
+import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Search, Sparkles } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { getPortfolioData, savePortfolioData, PortfolioData, TechItem, Venture, Project } from '@/lib/portfolio-store';
 import { getTechIcon } from '@/lib/icons';
@@ -259,14 +258,17 @@ export default function DashAdminPage() {
           <TabsContent value="tech">
             <div className="glass p-10 rounded-[2.5rem] border-white/10 space-y-10">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-white/5">
-                <div>
-                  <h3 className="text-2xl font-headline font-bold mb-2">Technical Arsenal</h3>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-headline font-bold flex items-center gap-2">
+                    <Sparkles className="text-primary" size={24} />
+                    Technical Arsenal
+                  </h3>
                   <p className="text-sm text-muted-foreground max-w-sm">
                     Enter the tool name, and our system will automatically match it with a high-quality icon.
                   </p>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-stretch">
                   <div className="relative flex-grow min-w-[240px]">
                     <Input 
                       placeholder="Tool Name (e.g. Next.js, Flutter)" 
@@ -280,7 +282,7 @@ export default function DashAdminPage() {
                   </div>
                   
                   <Select value={newTechCategory} onValueChange={(v) => setNewTechCategory(v as TechItem['category'])}>
-                    <SelectTrigger className="w-full sm:w-[180px] h-14 bg-white/5 border-white/10 rounded-2xl text-base">
+                    <SelectTrigger className="w-full sm:w-[180px] h-14 bg-white/5 border-white/10 rounded-2xl text-base px-6">
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent className="glass border-white/10 shadow-2xl rounded-2xl overflow-hidden p-1">
@@ -297,15 +299,15 @@ export default function DashAdminPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                 {data.techStack.map(t => (
-                  <div key={t.id} className="group relative p-6 bg-white/[0.03] border border-white/5 rounded-3xl flex flex-col items-center gap-4 transition-all hover:bg-white/[0.05] hover:border-primary/30 hover:shadow-lg">
-                    <div className="p-4 bg-primary/10 text-primary rounded-2xl group-hover:scale-110 transition-transform">
+                  <div key={t.id} className="group relative p-6 bg-white/[0.03] border border-white/5 rounded-[2rem] flex flex-col items-center gap-4 transition-all hover:bg-white/[0.06] hover:border-primary/30 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]">
+                    <div className="p-4 bg-primary/10 text-primary rounded-2xl group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                       {getTechIcon(t.name, 32)}
                     </div>
                     <div className="text-center">
-                      <p className="font-bold text-lg leading-none mb-2">{t.name}</p>
-                      <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                      <p className="font-bold text-base leading-tight mb-1">{t.name}</p>
+                      <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest bg-white/5 px-2.5 py-1 rounded-full border border-white/5">
                         {t.category}
                       </span>
                     </div>
