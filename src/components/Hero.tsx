@@ -71,10 +71,25 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full -z-10" />
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 -z-20 h-full w-full bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+      
+      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full -z-10 animate-pulse" />
       <div className="absolute bottom-1/4 -left-20 w-[400px] h-[400px] bg-accent/10 blur-[100px] rounded-full -z-10" />
 
-      <div className="container mx-auto px-6">
+      {/* Floating Animated Shapes */}
+      <motion.div 
+        animate={{ y: [0, -20, 0], opacity: [0.1, 0.3, 0.1] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/3 left-1/4 w-32 h-32 border border-primary/20 rounded-full -z-10"
+      />
+      <motion.div 
+        animate={{ rotate: 360 }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="absolute top-2/3 right-1/4 w-48 h-48 border-t-2 border-l-2 border-accent/10 rounded-[3rem] -z-10"
+      />
+
+      <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -123,8 +138,11 @@ export function Hero() {
             className="relative hidden lg:block"
           >
             <div className="relative w-full aspect-square max-w-[500px] mx-auto">
+              {/* Image Frame Accents */}
+              <div className="absolute -inset-4 border border-white/5 rounded-[4.5rem] -z-10 animate-spin-slow duration-[10s]" />
+              
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-accent/20 rounded-[4rem] rotate-6 blur-2xl" />
-              <div className="absolute inset-0 border-2 border-white/10 rounded-[4rem] -rotate-3" />
+              <div className="absolute inset-0 border-2 border-white/10 rounded-[4rem] -rotate-3 transition-transform hover:rotate-0 duration-500" />
               <div className="relative w-full h-full rounded-[4rem] overflow-hidden border border-white/10 glass shadow-2xl">
                 {data.hero.imageUrl ? (
                   <Image 
