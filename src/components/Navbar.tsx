@@ -7,10 +7,10 @@ import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
-  { name: 'About', href: '#about' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Stack', href: '#stack' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'About', href: '/#about' },
+  { name: 'Projects', href: '/#projects' },
+  { name: 'Stack', href: '/#stack' },
+  { name: 'Contact', href: '/#contact' },
 ];
 
 export function Navbar() {
@@ -45,7 +45,7 @@ export function Navbar() {
             </Link>
           ))}
           <Link 
-            href="#contact" 
+            href="/#contact" 
             className="px-5 py-2 bg-primary/10 text-primary border border-primary/20 rounded-full text-sm font-semibold hover:bg-primary hover:text-white transition-all"
           >
             Hire Me

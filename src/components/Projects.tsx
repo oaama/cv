@@ -22,7 +22,7 @@ export function Projects() {
   if (!data && !loading) return null;
 
   return (
-    <section id="projects" className="py-24">
+    <section id="projects" className="py-24 scroll-mt-32">
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>

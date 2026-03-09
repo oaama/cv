@@ -19,7 +19,7 @@ export function TechStack() {
   if (!data) return null;
 
   return (
-    <section id="stack" className="py-24">
+    <section id="stack" className="py-24 scroll-mt-32">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-headline font-bold mb-4">Mastering the <span className="text-primary">Tools</span></h2>

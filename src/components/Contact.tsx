@@ -70,7 +70,7 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-card/20 border-t border-white/5">
+    <section id="contact" className="py-24 bg-card/20 border-t border-white/5 scroll-mt-32">
       <div className="container mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-20">
