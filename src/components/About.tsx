@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Building2, Rocket, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 
 export function About() {
@@ -56,12 +57,22 @@ export function About() {
             className="relative aspect-square"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/10 rounded-[3rem] -rotate-3 border border-white/10" />
-            <div className="absolute inset-0 bg-card border border-white/10 rounded-[3rem] rotate-3 overflow-hidden flex items-center justify-center p-12">
-               <div className="text-center">
-                  <Rocket size={120} className="text-primary/20 mb-6 mx-auto" />
-                  <p className="font-headline text-3xl font-bold tracking-tight mb-2">{data.about.experienceTitle}</p>
-                  <p className="text-muted-foreground uppercase tracking-widest text-sm font-bold">{data.about.experienceSub}</p>
-               </div>
+            <div className="absolute inset-0 bg-card border border-white/10 rounded-[3rem] rotate-3 overflow-hidden flex items-center justify-center relative">
+               {data.about.imageUrl ? (
+                 <Image 
+                   src={data.about.imageUrl} 
+                   alt="Angelo Profile" 
+                   fill 
+                   className="object-cover"
+                   data-ai-hint="man developer"
+                 />
+               ) : (
+                 <div className="text-center p-12">
+                    <Rocket size={120} className="text-primary/20 mb-6 mx-auto" />
+                    <p className="font-headline text-3xl font-bold tracking-tight mb-2">{data.about.experienceTitle}</p>
+                    <p className="text-muted-foreground uppercase tracking-widest text-sm font-bold">{data.about.experienceSub}</p>
+                 </div>
+               )}
             </div>
           </motion.div>
         </div>

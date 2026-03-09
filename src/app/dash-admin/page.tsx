@@ -23,7 +23,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Sparkles } from 'lucide-react';
+import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { getPortfolioData, savePortfolioData, PortfolioData, TechItem, Venture, Project } from '@/lib/portfolio-store';
 import { getTechIcon } from '@/lib/icons';
@@ -163,9 +163,18 @@ export default function DashAdminPage() {
                      <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">About Title</label>
                      <Input value={data.about.title} onChange={e => updateAbout('title', e.target.value)} className="bg-white/5 border-white/10 h-12" />
                    </div>
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Profile Image URL</label>
+                     <div className="flex gap-2">
+                        <Input value={data.about.imageUrl || ''} onChange={e => updateAbout('imageUrl', e.target.value)} className="bg-white/5 border-white/10 h-12" placeholder="https://..." />
+                        <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {data.about.imageUrl ? <img src={data.about.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={20} className="text-muted-foreground" />}
+                        </div>
+                     </div>
+                   </div>
                    <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Since Year Title</label>
+                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Experience Title</label>
                         <Input value={data.about.experienceTitle} onChange={e => updateAbout('experienceTitle', e.target.value)} className="bg-white/5 border-white/10 h-12" />
                       </div>
                       <div className="space-y-2">
@@ -374,7 +383,7 @@ export default function DashAdminPage() {
 
                    <div className="grid gap-4">
                      <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Description</label>
-                     <Textarea placeholder="What problems did this project solve?" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} className="bg-white/5 border-white/10 rounded-2xl min-h-[120px]" />
+                     <Input placeholder="What problems did this project solve?" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                    </div>
 
                    <div className="grid md:grid-cols-2 gap-6">

@@ -35,6 +35,7 @@ export interface PortfolioData {
     ventures: Venture[];
     experienceTitle: string;
     experienceSub: string;
+    imageUrl?: string;
   };
   projects: Project[];
   techStack: TechItem[];
@@ -46,7 +47,7 @@ export interface PortfolioData {
   };
 }
 
-const STORAGE_KEY = 'apex_portfolio_complete_data_v4';
+const STORAGE_KEY = 'apex_portfolio_complete_data_v5';
 
 const initialData: PortfolioData = {
   hero: {
@@ -59,6 +60,7 @@ const initialData: PortfolioData = {
     bio: "I am a Software Engineer based in Egypt, specializing in crafting premium web experiences and cross-platform mobile applications using Flutter. My journey is about building ecosystems through Zone A and driving innovation with Sidra.",
     experienceTitle: "Since 2022",
     experienceSub: "Developing Excellence",
+    imageUrl: "https://picsum.photos/seed/angelo/800/800",
     ventures: [
       {
         title: "Zone A",
