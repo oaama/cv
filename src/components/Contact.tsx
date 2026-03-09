@@ -23,10 +23,30 @@ export function Contact() {
   if (!data) return null;
 
   const socials = [
-    { icon: <Mail />, label: 'Email', value: data.contact.email, href: `mailto:${data.contact.email}` },
-    { icon: <MessageCircle />, label: 'WhatsApp', value: data.contact.whatsapp, href: `https://wa.me/${data.contact.whatsapp.replace(/\D/g, '')}` },
-    { icon: <Linkedin />, label: 'LinkedIn', value: data.contact.linkedin, href: `https://linkedin.com${data.contact.linkedin}` },
-    { icon: <Github />, label: 'GitHub', value: data.contact.github, href: `https://github.com/${data.contact.github.replace('@', '')}` },
+    { 
+      icon: <Mail />, 
+      label: 'Email', 
+      value: data.contact.email, 
+      href: `mailto:${data.contact.email}` 
+    },
+    { 
+      icon: <MessageCircle />, 
+      label: 'WhatsApp', 
+      value: data.contact.whatsapp, 
+      href: `https://wa.me/${data.contact.whatsapp.replace(/\D/g, '')}` 
+    },
+    { 
+      icon: <Linkedin />, 
+      label: 'LinkedIn', 
+      value: 'LinkedIn Profile', 
+      href: data.contact.linkedin.startsWith('http') ? data.contact.linkedin : `https://linkedin.com${data.contact.linkedin}` 
+    },
+    { 
+      icon: <Github />, 
+      label: 'GitHub', 
+      value: data.contact.github, 
+      href: data.contact.github.startsWith('http') ? data.contact.github : `https://github.com/${data.contact.github.replace('@', '')}` 
+    },
   ];
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,14 +57,10 @@ export function Contact() {
     const email = formData.get('email') as string;
     const message = formData.get('message') as string;
 
-    // Clean number: remove anything that is not a digit
     const whatsappNumber = data.contact.whatsapp.replace(/\D/g, '');
-    
-    // Construct the formatted message
     const text = `Hello Angelo! 🚀\n\n*Name:* ${name}\n*Email:* ${email}\n\n*Message:*\n${message}`;
     const encodedText = encodeURIComponent(text);
     
-    // Redirect to WhatsApp
     window.open(`https://wa.me/${whatsappNumber}?text=${encodedText}`, '_blank');
     
     toast({
@@ -75,6 +91,8 @@ export function Contact() {
                   <a 
                     key={i} 
                     href={social.href} 
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-6 group hover:text-primary transition-colors"
                   >
                     <div className="w-14 h-14 glass flex items-center justify-center rounded-2xl group-hover:bg-primary group-hover:text-white group-hover:rotate-6 transition-all">
@@ -84,7 +102,7 @@ export function Contact() {
                       <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-1">
                         {social.label}
                       </p>
-                      <p className="text-lg font-bold">{social.value}</p>
+                      <p className="text-lg font-bold truncate max-w-[200px] md:max-w-xs">{social.value}</p>
                     </div>
                   </a>
                 ))}

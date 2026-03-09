@@ -89,9 +89,9 @@ const initialData: PortfolioData = {
   ],
   contact: {
     email: "angelo@technomedia.com",
-    whatsapp: "+20 112 757 0256",
-    linkedin: "/in/angelos",
-    github: "@angelos-dev"
+    whatsapp: "01127570256",
+    linkedin: "https://www.linkedin.com/in/angluos-rezq-4405b221a",
+    github: "@oaama"
   }
 };
 
