@@ -1,4 +1,3 @@
-
 "use client"
 
 export interface Venture {
@@ -34,6 +33,8 @@ export interface PortfolioData {
     title: string;
     bio: string;
     ventures: Venture[];
+    experienceTitle: string;
+    experienceSub: string;
   };
   projects: Project[];
   techStack: TechItem[];
@@ -45,7 +46,7 @@ export interface PortfolioData {
   };
 }
 
-const STORAGE_KEY = 'apex_portfolio_complete_data_v3'; // Bumped version to force update
+const STORAGE_KEY = 'apex_portfolio_complete_data_v4';
 
 const initialData: PortfolioData = {
   hero: {
@@ -56,6 +57,8 @@ const initialData: PortfolioData = {
   about: {
     title: "Driven by Innovation, Led by Passion.",
     bio: "I am a Software Engineer based in Egypt, specializing in crafting premium web experiences and cross-platform mobile applications using Flutter. My journey is about building ecosystems through Zone A and driving innovation with Sidra.",
+    experienceTitle: "Since 2022",
+    experienceSub: "Developing Excellence",
     ventures: [
       {
         title: "Zone A",
@@ -108,6 +111,5 @@ export const getPortfolioData = (): PortfolioData => {
 export const savePortfolioData = (data: PortfolioData) => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  // Dispatch custom event to notify components
   window.dispatchEvent(new Event('portfolio-update'));
 };

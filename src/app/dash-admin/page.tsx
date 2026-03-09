@@ -23,7 +23,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Search, Sparkles } from 'lucide-react';
+import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Sparkles } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { getPortfolioData, savePortfolioData, PortfolioData, TechItem, Venture, Project } from '@/lib/portfolio-store';
 import { getTechIcon } from '@/lib/icons';
@@ -157,10 +157,22 @@ export default function DashAdminPage() {
           <TabsContent value="about">
             <div className="glass p-10 rounded-[2.5rem] border-white/10 space-y-8">
               <div className="space-y-6">
-                <h3 className="text-2xl font-headline font-bold">About Angelo</h3>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">About Title</label>
-                  <Input value={data.about.title} onChange={e => updateAbout('title', e.target.value)} className="bg-white/5 border-white/10 h-12" />
+                <h3 className="text-2xl font-headline font-bold">About Section</h3>
+                <div className="grid md:grid-cols-2 gap-6">
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">About Title</label>
+                     <Input value={data.about.title} onChange={e => updateAbout('title', e.target.value)} className="bg-white/5 border-white/10 h-12" />
+                   </div>
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Since Year Title</label>
+                        <Input value={data.about.experienceTitle} onChange={e => updateAbout('experienceTitle', e.target.value)} className="bg-white/5 border-white/10 h-12" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Sub-text</label>
+                        <Input value={data.about.experienceSub} onChange={e => updateAbout('experienceSub', e.target.value)} className="bg-white/5 border-white/10 h-12" />
+                      </div>
+                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Detailed Bio</label>
@@ -243,13 +255,6 @@ export default function DashAdminPage() {
                       </TableCell>
                     </TableRow>
                   ))}
-                  {data.projects.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={3} className="h-40 text-center text-muted-foreground">
-                        No projects found. Start by adding your first creation!
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </TableBody>
               </Table>
             </div>
@@ -339,7 +344,7 @@ export default function DashAdminPage() {
                   <Input value={data.contact.whatsapp} onChange={e => updateContact('whatsapp', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">LinkedIn URL Slug</label>
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">LinkedIn URL</label>
                   <Input value={data.contact.linkedin} onChange={e => updateContact('linkedin', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
@@ -353,11 +358,11 @@ export default function DashAdminPage() {
 
         {isAddingProject && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-6">
-             <div className="glass w-full max-w-2xl p-12 rounded-[3rem] border-white/10 max-h-[90vh] overflow-y-auto shadow-[0_0_100px_rgba(0,0,0,0.5)]">
+             <div className="glass w-full max-w-2xl p-12 rounded-[3rem] border-white/10 max-h-[90vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-3xl font-headline font-bold text-gradient">{editingProjectId ? 'Edit Masterpiece' : 'New Creation'}</h3>
-                  <Button variant="ghost" size="icon" onClick={() => setIsAddingProject(false)} className="rounded-full hover:bg-white/10">
-                    <Trash2 size={24} className="rotate-45" />
+                  <h3 className="text-3xl font-headline font-bold text-gradient">{editingProjectId ? 'Edit Project' : 'New Project'}</h3>
+                  <Button variant="ghost" size="icon" onClick={() => setIsAddingProject(false)} className="rounded-full">
+                    <Plus size={24} className="rotate-45" />
                   </Button>
                 </div>
                 
@@ -393,7 +398,7 @@ export default function DashAdminPage() {
                       <Input placeholder="Link" value={projectForm.github} onChange={e => setProjectForm({...projectForm, github: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
                     </div>
                     <div className="grid gap-3">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Resources</label>
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Drive Resources</label>
                       <Input placeholder="Link" value={projectForm.drive} onChange={e => setProjectForm({...projectForm, drive: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
                     </div>
                   </div>

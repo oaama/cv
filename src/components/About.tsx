@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -60,8 +59,8 @@ export function About() {
             <div className="absolute inset-0 bg-card border border-white/10 rounded-[3rem] rotate-3 overflow-hidden flex items-center justify-center p-12">
                <div className="text-center">
                   <Rocket size={120} className="text-primary/20 mb-6 mx-auto" />
-                  <p className="font-headline text-3xl font-bold tracking-tight mb-2">Since 2018</p>
-                  <p className="text-muted-foreground uppercase tracking-widest text-sm font-bold">Developing Excellence</p>
+                  <p className="font-headline text-3xl font-bold tracking-tight mb-2">{data.about.experienceTitle}</p>
+                  <p className="text-muted-foreground uppercase tracking-widest text-sm font-bold">{data.about.experienceSub}</p>
                </div>
             </div>
           </motion.div>
