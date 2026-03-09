@@ -24,7 +24,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Image as ImageIcon, Upload, Loader2, Save } from 'lucide-react';
+import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Upload, Loader2, Save } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { getPortfolioData, savePortfolioData, PortfolioData, TechItem, Venture, Project } from '@/lib/portfolio-store';
 import { getTechIcon } from '@/lib/icons';
@@ -65,7 +65,7 @@ export default function DashAdminPage() {
   const persistData = (newData: PortfolioData) => {
     setData(newData);
     savePortfolioData(newData);
-    toast({ title: "Changes Saved", description: "Portfolio updated successfully." });
+    toast({ title: "Changes Saved", description: "Updated locally in your browser." });
   };
 
   const updateHero = (field: keyof PortfolioData['hero'], value: string) => {
@@ -94,7 +94,7 @@ export default function DashAdminPage() {
         const base64String = reader.result as string;
         onComplete(base64String);
         setIsUploading(null);
-        toast({ title: "Success", description: "Image processed locally." });
+        toast({ title: "Success", description: "Image saved to LocalStorage." });
       };
       reader.onerror = () => {
         setIsUploading(null);
@@ -143,8 +143,8 @@ export default function DashAdminPage() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-2xl md:text-4xl font-headline font-bold mb-1">Portfolio Editor</h1>
-            <p className="text-xs text-muted-foreground">Manage your content and visual presence.</p>
+            <h1 className="text-2xl md:text-4xl font-headline font-bold mb-1">Portfolio Manager</h1>
+            <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Client-Side Storage Only</p>
           </div>
           <Button variant="outline" className="border-white/10 text-muted-foreground hover:text-destructive gap-2 rounded-xl" onClick={handleLogout}>
             <LogOut size={16} /> Logout
@@ -152,96 +152,85 @@ export default function DashAdminPage() {
         </div>
 
         <Tabs defaultValue="hero" className="space-y-6">
-          <div className="overflow-x-auto no-scrollbar">
+          <div className="overflow-x-auto no-scrollbar pb-2">
             <TabsList className="bg-white/5 border border-white/10 p-1 rounded-2xl w-max flex">
-              <TabsTrigger value="hero" className="rounded-xl gap-2 py-2 px-4 whitespace-nowrap"><User size={14}/> Hero</TabsTrigger>
-              <TabsTrigger value="about" className="rounded-xl gap-2 py-2 px-4 whitespace-nowrap"><Briefcase size={14}/> About</TabsTrigger>
-              <TabsTrigger value="projects" className="rounded-xl gap-2 py-2 px-4 whitespace-nowrap"><LayoutGrid size={14}/> Projects</TabsTrigger>
-              <TabsTrigger value="tech" className="rounded-xl gap-2 py-2 px-4 whitespace-nowrap"><Cpu size={14}/> Tech</TabsTrigger>
-              <TabsTrigger value="contact" className="rounded-xl gap-2 py-2 px-4 whitespace-nowrap"><Phone size={14}/> Contact</TabsTrigger>
+              <TabsTrigger value="hero" className="rounded-xl gap-2 py-2 px-6 whitespace-nowrap"><User size={14}/> Hero</TabsTrigger>
+              <TabsTrigger value="about" className="rounded-xl gap-2 py-2 px-6 whitespace-nowrap"><Briefcase size={14}/> About</TabsTrigger>
+              <TabsTrigger value="projects" className="rounded-xl gap-2 py-2 px-6 whitespace-nowrap"><LayoutGrid size={14}/> Projects</TabsTrigger>
+              <TabsTrigger value="tech" className="rounded-xl gap-2 py-2 px-6 whitespace-nowrap"><Cpu size={14}/> Tech</TabsTrigger>
+              <TabsTrigger value="contact" className="rounded-xl gap-2 py-2 px-6 whitespace-nowrap"><Phone size={14}/> Contact</TabsTrigger>
             </TabsList>
           </div>
 
           <TabsContent value="hero">
-            <div className="glass p-6 md:p-8 rounded-[2rem] border-white/10 space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
+            <div className="glass p-6 md:p-10 rounded-[2.5rem] border-white/10 space-y-8">
+              <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Name</label>
-                  <Input value={data.hero.name} onChange={e => updateHero('name', e.target.value)} className="bg-white/5 border-white/10 h-12 rounded-xl" />
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Your Name</label>
+                  <Input value={data.hero.name} onChange={e => updateHero('name', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Title</label>
-                  <Input value={data.hero.specialty} onChange={e => updateHero('specialty', e.target.value)} className="bg-white/5 border-white/10 h-12 rounded-xl" />
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Specialty / Title</label>
+                  <Input value={data.hero.specialty} onChange={e => updateHero('specialty', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Hero Image</label>
-                <div className="flex items-center gap-4">
-                  <Input 
-                    value={data.hero.imageUrl || ''} 
-                    onChange={e => updateHero('imageUrl', e.target.value)} 
-                    placeholder="URL or Upload" 
-                    className="bg-white/5 border-white/10 h-12 rounded-xl" 
-                  />
-                  <Button 
-                    variant="secondary" 
-                    className="rounded-xl h-12 px-4 gap-2"
-                    onClick={() => heroFileRef.current?.click()}
-                    disabled={!!isUploading}
-                  >
-                    {isUploading === 'hero' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={16}/>}
-                  </Button>
-                  <input type="file" ref={heroFileRef} className="hidden" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(file, 'hero', (url) => updateHero('imageUrl', url)); }} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Bio</label>
-                <Textarea value={data.hero.bio} onChange={e => updateHero('bio', e.target.value)} rows={3} className="bg-white/5 border-white/10 rounded-xl" />
+                <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Short Bio</label>
+                <Textarea value={data.hero.bio} onChange={e => updateHero('bio', e.target.value)} rows={3} className="bg-white/5 border-white/10 rounded-2xl p-4" />
               </div>
             </div>
           </TabsContent>
 
           <TabsContent value="about">
-            <div className="glass p-6 md:p-8 rounded-[2rem] border-white/10 space-y-8">
-              <div className="grid md:grid-cols-2 gap-6">
+            <div className="glass p-6 md:p-10 rounded-[2.5rem] border-white/10 space-y-10">
+              <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Section Title</label>
-                  <Input value={data.about.title} onChange={e => updateAbout('title', e.target.value)} className="bg-white/5 border-white/10 h-12 rounded-xl" />
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">About Title</label>
+                  <Input value={data.about.title} onChange={e => updateAbout('title', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Profile Image (Above Title)</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Profile Photo</label>
                   <div className="flex items-center gap-4">
                     <Input 
                       value={data.about.imageUrl || ''} 
                       onChange={e => updateAbout('imageUrl', e.target.value)} 
-                      placeholder="URL or Upload" 
-                      className="bg-white/5 border-white/10 h-12 rounded-xl" 
+                      placeholder="Image URL" 
+                      className="bg-white/5 border-white/10 h-14 rounded-2xl" 
                     />
                     <Button 
                       variant="secondary" 
-                      className="rounded-xl h-12 px-4 gap-2"
+                      className="rounded-2xl h-14 px-5 gap-2"
                       onClick={() => aboutFileRef.current?.click()}
                       disabled={!!isUploading}
                     >
-                      {isUploading === 'about' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={16}/>}
+                      {isUploading === 'about' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={18}/>}
                     </Button>
                     <input type="file" ref={aboutFileRef} className="hidden" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(file, 'about', (url) => updateAbout('imageUrl', url)); }} />
                   </div>
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Description</label>
-                <Textarea value={data.about.bio} onChange={e => updateAbout('bio', e.target.value)} rows={4} className="bg-white/5 border-white/10 rounded-xl" />
+                <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Main Description</label>
+                <Textarea value={data.about.bio} onChange={e => updateAbout('bio', e.target.value)} rows={4} className="bg-white/5 border-white/10 rounded-2xl p-4" />
               </div>
 
-              <div className="pt-4 space-y-4">
+              <div className="pt-6 border-t border-white/5 space-y-6">
                 <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Featured Ventures</h4>
                 <div className="grid gap-4">
                   {data.about.ventures.map((v, i) => (
-                    <div key={i} className="p-4 bg-white/5 rounded-2xl border border-white/5 grid md:grid-cols-3 gap-4">
-                      <Input placeholder="Venture" value={v.title} onChange={e => updateVenture(i, 'title', e.target.value)} className="bg-black/20 border-white/5 rounded-lg" />
-                      <Input placeholder="Role" value={v.role} onChange={e => updateVenture(i, 'role', e.target.value)} className="bg-black/20 border-white/5 rounded-lg" />
-                      <Input placeholder="Summary" value={v.description} onChange={e => updateVenture(i, 'description', e.target.value)} className="bg-black/20 border-white/5 rounded-lg" />
+                    <div key={i} className="p-6 bg-white/5 rounded-3xl border border-white/5 grid md:grid-cols-3 gap-6">
+                      <div className="space-y-1">
+                        <label className="text-[9px] uppercase font-bold text-muted-foreground ml-1">Title</label>
+                        <Input placeholder="Venture Name" value={v.title} onChange={e => updateVenture(i, 'title', e.target.value)} className="bg-black/20 border-white/5 rounded-xl h-12" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] uppercase font-bold text-muted-foreground ml-1">Role</label>
+                        <Input placeholder="Your Role" value={v.role} onChange={e => updateVenture(i, 'role', e.target.value)} className="bg-black/20 border-white/5 rounded-xl h-12" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] uppercase font-bold text-muted-foreground ml-1">Summary</label>
+                        <Input placeholder="Short Summary" value={v.description} onChange={e => updateVenture(i, 'description', e.target.value)} className="bg-black/20 border-white/5 rounded-xl h-12" />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -250,33 +239,33 @@ export default function DashAdminPage() {
           </TabsContent>
 
           <TabsContent value="projects">
-            <div className="glass rounded-[2rem] border-white/10 overflow-hidden">
-              <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-                <h3 className="font-headline font-bold">Projects</h3>
-                <Button size="sm" onClick={() => { setEditingProjectId(null); setProjectForm({name:'', description:'', tech:'', image:'https://picsum.photos/seed/1/800/600', demo:'', github:''}); setIsAddingProject(true); }} className="bg-primary rounded-xl px-4">
-                  <Plus size={16} className="mr-1"/> Add
+            <div className="glass rounded-[2.5rem] border-white/10 overflow-hidden">
+              <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                <h3 className="font-headline font-bold text-xl">Projects</h3>
+                <Button size="sm" onClick={() => { setEditingProjectId(null); setProjectForm({name:'', description:'', tech:'', image:'https://picsum.photos/seed/1/800/600', demo:'', github:''}); setIsAddingProject(true); }} className="bg-primary rounded-2xl px-6 h-12">
+                  <Plus size={18} className="mr-2"/> New Project
                 </Button>
               </div>
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-white/5">
-                      <TableHead className="py-4">Project</TableHead>
-                      <TableHead className="py-4">Tech</TableHead>
-                      <TableHead className="py-4 text-right">Actions</TableHead>
+                    <TableRow className="border-white/5 hover:bg-transparent">
+                      <TableHead className="py-6 px-8">Project Name</TableHead>
+                      <TableHead className="py-6">Stack</TableHead>
+                      <TableHead className="py-6 text-right px-8">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {data.projects.map((p) => (
                       <TableRow key={p.id} className="border-white/5 hover:bg-white/[0.01]">
-                        <TableCell className="font-bold">{p.name}</TableCell>
+                        <TableCell className="font-bold px-8 py-5">{p.name}</TableCell>
                         <TableCell className="text-xs text-muted-foreground">{p.tech}</TableCell>
-                        <TableCell className="text-right space-x-1">
-                          <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-primary/10" onClick={() => { setEditingProjectId(p.id); setProjectForm({...p}); setIsAddingProject(true); }}>
-                            <Edit size={14}/>
+                        <TableCell className="text-right space-x-2 px-8 py-5">
+                          <Button size="icon" variant="ghost" className="h-10 w-10 hover:bg-primary/10 rounded-xl" onClick={() => { setEditingProjectId(p.id); setProjectForm({...p}); setIsAddingProject(true); }}>
+                            <Edit size={16}/>
                           </Button>
-                          <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => deleteProject(p.id)}>
-                            <Trash2 size={14}/>
+                          <Button size="icon" variant="ghost" className="h-10 w-10 text-muted-foreground hover:text-destructive rounded-xl" onClick={() => deleteProject(p.id)}>
+                            <Trash2 size={16}/>
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -288,40 +277,46 @@ export default function DashAdminPage() {
           </TabsContent>
 
           <TabsContent value="tech">
-            <div className="glass p-6 md:p-8 rounded-[2rem] border-white/10 space-y-8">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Input 
-                  placeholder="Tool Name" 
-                  value={techInput}
-                  onChange={(e) => setTechInput(e.target.value)}
-                  className="bg-white/5 border-white/10 rounded-xl h-12" 
-                />
-                <Select value={newTechCategory} onValueChange={(v) => setNewTechCategory(v as TechItem['category'])}>
-                  <SelectTrigger className="w-full sm:w-[150px] bg-white/5 border-white/10 rounded-xl h-12">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="glass border-white/10 rounded-xl">
-                    <SelectItem value="Web">Web</SelectItem>
-                    <SelectItem value="Mobile">Mobile</SelectItem>
-                    <SelectItem value="Backend">Backend</SelectItem>
-                    <SelectItem value="Cloud">Cloud</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button onClick={addTech} className="bg-primary h-12 rounded-xl px-8">Add Tool</Button>
+            <div className="glass p-6 md:p-10 rounded-[2.5rem] border-white/10 space-y-10">
+              <div className="flex flex-col sm:flex-row gap-4 items-end">
+                <div className="flex-1 space-y-2 w-full">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Tool Name</label>
+                  <Input 
+                    placeholder="e.g. Next.js" 
+                    value={techInput}
+                    onChange={(e) => setTechInput(e.target.value)}
+                    className="bg-white/5 border-white/10 rounded-2xl h-14" 
+                  />
+                </div>
+                <div className="space-y-2 w-full sm:w-[200px]">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Category</label>
+                  <Select value={newTechCategory} onValueChange={(v) => setNewTechCategory(v as TechItem['category'])}>
+                    <SelectTrigger className="bg-white/5 border-white/10 rounded-2xl h-14">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="glass border-white/10 rounded-2xl">
+                      <SelectItem value="Web">Web</SelectItem>
+                      <SelectItem value="Mobile">Mobile</SelectItem>
+                      <SelectItem value="Backend">Backend</SelectItem>
+                      <SelectItem value="Cloud">Cloud</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={addTech} className="bg-primary h-14 rounded-2xl px-10">Add Tool</Button>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
                 {data.techStack.map(t => (
-                  <div key={t.id} className="group relative p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex flex-col items-center gap-2 hover:border-primary/20 transition-all">
-                    <div className="text-primary">{getTechIcon(t.name, 20)}</div>
-                    <p className="font-bold text-xs">{t.name}</p>
+                  <div key={t.id} className="group relative p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] flex flex-col items-center gap-3 hover:border-primary/30 transition-all text-center">
+                    <div className="text-primary">{getTechIcon(t.name, 28)}</div>
+                    <p className="font-bold text-sm">{t.name}</p>
                     <Button 
                       size="icon" 
-                      variant="ghost" 
-                      className="absolute -top-2 -right-2 h-6 w-6 bg-destructive text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" 
+                      variant="destructive" 
+                      className="absolute -top-2 -right-2 h-7 w-7 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg" 
                       onClick={() => removeTech(t.id)}
                     >
-                      <Trash2 size={10}/>
+                      <Trash2 size={12}/>
                     </Button>
                   </div>
                 ))}
@@ -330,23 +325,23 @@ export default function DashAdminPage() {
           </TabsContent>
 
           <TabsContent value="contact">
-            <div className="glass p-6 md:p-8 rounded-[2rem] border-white/10">
-              <div className="grid md:grid-cols-2 gap-6">
+            <div className="glass p-6 md:p-10 rounded-[2.5rem] border-white/10">
+              <div className="grid md:grid-cols-2 gap-10">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Email</label>
-                  <Input value={data.contact.email} onChange={e => updateContact('email', e.target.value)} className="bg-white/5 border-white/10 h-12 rounded-xl" />
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Public Email</label>
+                  <Input value={data.contact.email} onChange={e => updateContact('email', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">WhatsApp</label>
-                  <Input value={data.contact.whatsapp} onChange={e => updateContact('whatsapp', e.target.value)} className="bg-white/5 border-white/10 h-12 rounded-xl" />
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">WhatsApp Number</label>
+                  <Input value={data.contact.whatsapp} onChange={e => updateContact('whatsapp', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">LinkedIn</label>
-                  <Input value={data.contact.linkedin} onChange={e => updateContact('linkedin', e.target.value)} className="bg-white/5 border-white/10 h-12 rounded-xl" />
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">LinkedIn Link</label>
+                  <Input value={data.contact.linkedin} onChange={e => updateContact('linkedin', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">GitHub</label>
-                  <Input value={data.contact.github} onChange={e => updateContact('github', e.target.value)} className="bg-white/5 border-white/10 h-12 rounded-xl" />
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">GitHub Username</label>
+                  <Input value={data.contact.github} onChange={e => updateContact('github', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
               </div>
             </div>
@@ -354,30 +349,48 @@ export default function DashAdminPage() {
         </Tabs>
 
         {isAddingProject && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto">
-             <div className="glass w-full max-w-xl p-8 rounded-[2rem] border-white/10 my-8">
-                <h3 className="text-xl font-headline font-bold mb-6">{editingProjectId ? 'Edit Project' : 'New Project'}</h3>
-                <div className="space-y-4">
-                   <Input placeholder="Project Name" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
-                   <Textarea placeholder="Description" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} className="bg-white/5 border-white/10 rounded-xl" />
-                   <Input placeholder="Tech Stack (e.g. React, Node)" value={projectForm.tech} onChange={e => setProjectForm({...projectForm, tech: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 overflow-y-auto">
+             <div className="glass w-full max-w-2xl p-8 md:p-10 rounded-[3rem] border-white/10 my-10 relative">
+                <h3 className="text-2xl font-headline font-bold mb-8">{editingProjectId ? 'Update Project' : 'New Creation'}</h3>
+                <div className="space-y-6">
+                   <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-primary ml-1">Name</label>
+                      <Input placeholder="Project Name" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                   </div>
+                   <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-primary ml-1">Description</label>
+                      <Textarea placeholder="What did you build?" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} className="bg-white/5 border-white/10 rounded-2xl p-4 h-32" />
+                   </div>
+                   <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-primary ml-1">Stack (Separated by commas)</label>
+                      <Input placeholder="e.g. Flutter, Firebase, Dart" value={projectForm.tech} onChange={e => setProjectForm({...projectForm, tech: e.target.value})} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                   </div>
                    
-                   <div className="flex items-center gap-4">
-                      <Input placeholder="Image URL or Upload" value={projectForm.image} onChange={e => setProjectForm({...projectForm, image: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
-                      <Button variant="secondary" className="h-12 rounded-xl" onClick={() => projectFileRef.current?.click()}>
-                        {isUploading === 'project' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={16}/>}
-                      </Button>
-                      <input type="file" ref={projectFileRef} className="hidden" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(file, 'project', (url) => setProjectForm({...projectForm, image: url})); }} />
+                   <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-primary ml-1">Cover Image</label>
+                      <div className="flex items-center gap-4">
+                        <Input placeholder="Image URL or Base64" value={projectForm.image} onChange={e => setProjectForm({...projectForm, image: e.target.value})} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                        <Button variant="secondary" className="h-14 rounded-2xl px-5" onClick={() => projectFileRef.current?.click()}>
+                          {isUploading === 'project' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={18}/>}
+                        </Button>
+                        <input type="file" ref={projectFileRef} className="hidden" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(file, 'project', (url) => setProjectForm({...projectForm, image: url})); }} />
+                      </div>
                    </div>
 
-                   <div className="grid grid-cols-2 gap-4">
-                    <Input placeholder="Demo Link" value={projectForm.demo} onChange={e => setProjectForm({...projectForm, demo: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
-                    <Input placeholder="GitHub Link" value={projectForm.github} onChange={e => setProjectForm({...projectForm, github: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
+                   <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-primary ml-1">Live Demo</label>
+                      <Input placeholder="URL" value={projectForm.demo} onChange={e => setProjectForm({...projectForm, demo: e.target.value})} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-primary ml-1">Source Code</label>
+                      <Input placeholder="GitHub URL" value={projectForm.github} onChange={e => setProjectForm({...projectForm, github: e.target.value})} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                    </div>
                   </div>
                 </div>
-                <div className="flex justify-end gap-3 mt-8">
-                   <Button variant="ghost" onClick={() => setIsAddingProject(false)}>Cancel</Button>
-                   <Button onClick={handleSaveProject} className="bg-primary px-8 rounded-xl">Save</Button>
+                <div className="flex justify-end gap-4 mt-10">
+                   <Button variant="ghost" onClick={() => setIsAddingProject(false)} className="rounded-2xl h-14 px-8">Cancel</Button>
+                   <Button onClick={handleSaveProject} className="bg-primary px-12 rounded-2xl h-14 font-bold shadow-xl shadow-primary/20">Save Project</Button>
                 </div>
              </div>
           </div>

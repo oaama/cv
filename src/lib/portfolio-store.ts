@@ -46,29 +46,30 @@ export interface PortfolioData {
   };
 }
 
-const STORAGE_KEY = 'apex_portfolio_complete_data_v7';
+const STORAGE_KEY = 'apex_portfolio_final_v10';
 
+// NOTE: Edit these values directly before building for production if you don't use a database.
 const initialData: PortfolioData = {
   hero: {
     name: "Angelo",
     specialty: "Web & Flutter",
-    bio: "I build modern websites and powerful mobile applications. Founder of Zone A & Sidra.",
+    bio: "I build modern websites and powerful mobile applications. Founder of Zone A & Sidra. Driven by code, led by innovation.",
     imageUrl: "https://picsum.photos/seed/angelo-hero/800/800"
   },
   about: {
     title: "Driven by Innovation, Led by Passion.",
-    bio: "I am a Software Engineer based in Egypt, specializing in crafting premium web experiences and cross-platform mobile applications using Flutter.",
+    bio: "I am a Software Engineer based in Egypt, specializing in crafting premium web experiences and cross-platform mobile applications using Flutter. I focus on creating clean, efficient, and scalable code that solves real-world problems.",
     imageUrl: "https://picsum.photos/seed/angelo-about/800/800",
     ventures: [
       {
         title: "Zone A",
         role: "Founder & CEO",
-        description: "An integrated software house and tech academy empowering businesses and developers."
+        description: "An integrated software house and tech academy empowering businesses and developers with cutting-edge solutions."
       },
       {
         title: "Sidra",
         role: "Founder",
-        description: "Innovative tech venture focused on driving digital transformation."
+        description: "Innovative tech venture focused on driving digital transformation through unique software products."
       }
     ]
   },
@@ -76,7 +77,7 @@ const initialData: PortfolioData = {
     {
       id: "1",
       name: "Royal Cut",
-      description: "A premium barber booking mobile app designed for seamless scheduling.",
+      description: "A premium barber booking mobile app designed for seamless scheduling and barber shop management.",
       tech: "Flutter, Firebase, Dart",
       image: "https://picsum.photos/seed/88/800/600",
       demo: "https://example.com",
@@ -87,12 +88,14 @@ const initialData: PortfolioData = {
     { id: '1', name: 'React', category: 'Web' },
     { id: '2', name: 'Flutter', category: 'Mobile' },
     { id: '3', name: 'Node.js', category: 'Backend' },
-    { id: '4', name: 'Firebase', category: 'Cloud' }
+    { id: '4', name: 'Firebase', category: 'Cloud' },
+    { id: '5', name: 'Next.js', category: 'Web' },
+    { id: '6', name: 'Tailwind CSS', category: 'Web' }
   ],
   contact: {
     email: "angluosr@gmail.com",
-    whatsapp: "01127570256",
-    linkedin: "https://linkedin.com",
+    whatsapp: "+201127570256",
+    linkedin: "https://linkedin.com/in/angelo",
     github: "@oaama"
   }
 };
