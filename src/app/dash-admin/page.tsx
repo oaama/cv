@@ -28,12 +28,9 @@ import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Sp
 import { toast } from '@/hooks/use-toast';
 import { getPortfolioData, savePortfolioData, PortfolioData, TechItem, Venture, Project } from '@/lib/portfolio-store';
 import { getTechIcon } from '@/lib/icons';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { useStorage } from '@/firebase';
 
 export default function DashAdminPage() {
   const router = useRouter();
-  const storage = useStorage();
   const [data, setData] = useState<PortfolioData | null>(null);
   const [newTechCategory, setNewTechCategory] = useState<TechItem['category']>('Web');
   const [techInput, setTechInput] = useState('');
@@ -89,29 +86,27 @@ export default function DashAdminPage() {
     persistData({ ...data, about: { ...data.about, ventures: newVentures } });
   };
 
+  // Local File Handler using FileReader (Base64)
   const handleFileUpload = async (file: File, path: string, onComplete: (url: string) => void) => {
-    if (!storage) {
-      toast({ title: "Storage Error", description: "Firebase Storage is not initialized.", variant: "destructive" });
-      return;
-    }
-    
     setIsUploading(path);
-    const storageRef = ref(storage, `portfolio/${path}/${Date.now()}_${file.name}`);
     
     try {
-      const snapshot = await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(snapshot.ref);
-      onComplete(url);
-      toast({ title: "Upload Success", description: "Image uploaded successfully." });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        onComplete(base64String);
+        setIsUploading(null);
+        toast({ title: "Success", description: "Image processed locally." });
+      };
+      reader.onerror = () => {
+        setIsUploading(null);
+        toast({ title: "Error", description: "Failed to read file.", variant: "destructive" });
+      };
+      reader.readAsDataURL(file);
     } catch (error: any) {
       console.error(error);
-      toast({ 
-        title: "Upload Failed", 
-        description: error.message || "Make sure Firebase Storage rules are set to public for development.", 
-        variant: "destructive" 
-      });
-    } finally {
       setIsUploading(null);
+      toast({ title: "Failed", description: "Could not process image.", variant: "destructive" });
     }
   };
 
@@ -199,10 +194,10 @@ export default function DashAdminPage() {
                         size="sm" 
                         className="rounded-xl h-10 px-4 gap-2"
                         onClick={() => heroFileRef.current?.click()}
-                        disabled={isUploading === 'hero'}
+                        disabled={!!isUploading}
                       >
                         {isUploading === 'hero' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={16}/>}
-                        {isUploading === 'hero' ? 'Uploading...' : 'Upload Image'}
+                        {isUploading === 'hero' ? 'Processing...' : 'Upload Image'}
                       </Button>
                       <input 
                         type="file" 
@@ -253,10 +248,10 @@ export default function DashAdminPage() {
                               size="sm" 
                               className="rounded-xl h-10 px-4 gap-2"
                               onClick={() => aboutFileRef.current?.click()}
-                              disabled={isUploading === 'about'}
+                              disabled={!!isUploading}
                             >
                               {isUploading === 'about' ? <Loader2 className="animate-spin" size={16}/> : <Upload size={16}/>}
-                              {isUploading === 'about' ? 'Uploading...' : 'Upload Image'}
+                              {isUploading === 'about' ? 'Processing...' : 'Upload Image'}
                             </Button>
                             <input 
                               type="file" 
@@ -498,10 +493,10 @@ export default function DashAdminPage() {
                               size="sm" 
                               className="rounded-xl h-9 px-4 gap-2"
                               onClick={() => projectFileRef.current?.click()}
-                              disabled={isUploading === 'project'}
+                              disabled={!!isUploading}
                             >
                               {isUploading === 'project' ? <Loader2 className="animate-spin" size={14}/> : <Upload size={14}/>}
-                              {isUploading === 'project' ? 'Uploading...' : 'Upload Image'}
+                              {isUploading === 'project' ? 'Processing...' : 'Upload Image'}
                             </Button>
                             <input 
                               type="file" 
