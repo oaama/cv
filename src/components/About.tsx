@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Building2, Sparkles, User } from 'lucide-react';
+import { Building2, Sparkles } from 'lucide-react';
 import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 
 export function About() {
