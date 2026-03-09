@@ -24,16 +24,32 @@ export function Contact() {
 
   const socials = [
     { icon: <Mail />, label: 'Email', value: data.contact.email, href: `mailto:${data.contact.email}` },
-    { icon: <MessageCircle />, label: 'WhatsApp', value: data.contact.whatsapp, href: `https://wa.me/${data.contact.whatsapp.replace(/\s+/g, '')}` },
+    { icon: <MessageCircle />, label: 'WhatsApp', value: data.contact.whatsapp, href: `https://wa.me/${data.contact.whatsapp.replace(/\D/g, '')}` },
     { icon: <Linkedin />, label: 'LinkedIn', value: data.contact.linkedin, href: `https://linkedin.com${data.contact.linkedin}` },
     { icon: <Github />, label: 'GitHub', value: data.contact.github, href: `https://github.com/${data.contact.github.replace('@', '')}` },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const message = formData.get('message') as string;
+
+    // Clean number: remove anything that is not a digit
+    const whatsappNumber = data.contact.whatsapp.replace(/\D/g, '');
+    
+    // Construct the formatted message
+    const text = `Hello Angelo! 🚀\n\n*Name:* ${name}\n*Email:* ${email}\n\n*Message:*\n${message}`;
+    const encodedText = encodeURIComponent(text);
+    
+    // Redirect to WhatsApp
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodedText}`, '_blank');
+    
     toast({
-      title: "Message Sent!",
-      description: "Thank you for reaching out. I'll get back to you shortly.",
+      title: "Opening WhatsApp...",
+      description: "Redirecting you to start a conversation.",
     });
   };
 
@@ -85,19 +101,35 @@ export function Contact() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest ml-1">Name</label>
-                    <Input placeholder="Your Name" className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary" required />
+                    <Input 
+                      name="name" 
+                      placeholder="Your Name" 
+                      className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary" 
+                      required 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest ml-1">Email</label>
-                    <Input type="email" placeholder="Your Email" className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary" required />
+                    <Input 
+                      name="email" 
+                      type="email" 
+                      placeholder="Your Email" 
+                      className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary" 
+                      required 
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest ml-1">Message</label>
-                  <Textarea placeholder="Tell me about your project..." className="bg-white/5 border-white/10 min-h-[150px] rounded-xl focus-visible:ring-primary py-4" required />
+                  <Textarea 
+                    name="message" 
+                    placeholder="Tell me about your project..." 
+                    className="bg-white/5 border-white/10 min-h-[150px] rounded-xl focus-visible:ring-primary py-4" 
+                    required 
+                  />
                 </div>
                 <Button type="submit" className="w-full h-14 bg-primary text-white font-bold rounded-xl shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-2">
-                  Send Message <Send size={18} />
+                  Send to WhatsApp <Send size={18} />
                 </Button>
               </form>
             </motion.div>
