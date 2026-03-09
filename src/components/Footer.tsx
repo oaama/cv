@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from 'next/link';
@@ -21,8 +20,8 @@ export function Footer() {
         </p>
 
         <div className="flex items-center gap-8">
-          <Link href="#" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">Privacy</Link>
-          <Link href="#" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">Terms</Link>
+          <Link href="/privacy" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">Privacy</Link>
+          <Link href="/terms" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">Terms</Link>
         </div>
       </div>
     </footer>
