@@ -33,11 +33,6 @@ export function Projects() {
               A collection of digital experiences built across web and mobile platforms, solving real-world challenges.
             </p>
           </div>
-          <div className="flex gap-2">
-            <div className="h-1 w-20 bg-primary rounded-full" />
-            <div className="h-1 w-8 bg-white/20 rounded-full" />
-            <div className="h-1 w-4 bg-white/20 rounded-full" />
-          </div>
         </div>
 
         {loading ? (
