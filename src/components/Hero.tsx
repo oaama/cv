@@ -1,13 +1,26 @@
+
 "use client"
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
+import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 
 export function Hero() {
+  const [data, setData] = useState<PortfolioData | null>(null);
+
+  useEffect(() => {
+    setData(getPortfolioData());
+    const handleUpdate = () => setData(getPortfolioData());
+    window.addEventListener('portfolio-update', handleUpdate);
+    return () => window.removeEventListener('portfolio-update', handleUpdate);
+  }, []);
+
+  if (!data) return null;
+
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Background Decor */}
       <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full -z-10" />
       <div className="absolute bottom-1/4 -left-20 w-[400px] h-[400px] bg-accent/10 blur-[100px] rounded-full -z-10" />
 
@@ -22,8 +35,8 @@ export function Hero() {
               Software Engineer
             </span>
             <h1 className="text-6xl md:text-8xl font-headline font-bold leading-[0.9] mb-8 tracking-tighter">
-              Angelo <br />
-              <span className="text-muted-foreground">Specialist in</span> <span className="text-gradient">Web & Flutter</span>
+              {data.hero.name} <br />
+              <span className="text-muted-foreground">Specialist in</span> <span className="text-gradient">{data.hero.specialty}</span>
             </h1>
           </motion.div>
 
@@ -33,7 +46,7 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl leading-relaxed"
           >
-            I build modern websites and powerful mobile applications. Founder of Zone A & Sidra.
+            {data.hero.bio}
           </motion.p>
 
           <motion.div

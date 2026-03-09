@@ -2,9 +2,9 @@
 "use client"
 
 import { motion } from 'framer-motion';
-import { ExternalLink, Github, FileBox } from 'lucide-react';
+import { ExternalLink, Github, FileBox, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
-import { Project } from '@/lib/project-store';
+import { Project } from '@/lib/portfolio-store';
 
 export function ProjectCard({ project }: { project: Project }) {
   return (
@@ -16,24 +16,24 @@ export function ProjectCard({ project }: { project: Project }) {
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image 
-          src={project.image} 
+          src={project.image || 'https://picsum.photos/seed/placeholder/800/600'} 
           alt={project.name}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
           {project.demo && (
-            <a href={project.demo} target="_blank" className="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform">
+            <a href={project.demo} target="_blank" rel="noopener noreferrer" className="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform">
               <ExternalLink size={20} />
             </a>
           )}
           {project.github && (
-            <a href={project.github} target="_blank" className="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform">
+            <a href={project.github} target="_blank" rel="noopener noreferrer" className="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform">
               <Github size={20} />
             </a>
           )}
           {project.drive && (
-            <a href={project.drive} target="_blank" className="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform">
+            <a href={project.drive} target="_blank" rel="noopener noreferrer" className="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform">
               <FileBox size={20} />
             </a>
           )}
@@ -56,6 +56,7 @@ export function ProjectCard({ project }: { project: Project }) {
         <div className="flex items-center gap-4 pt-4 border-t border-white/5">
            <a 
              href={project.demo || '#'} 
+             target="_blank" rel="noopener noreferrer"
              className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2 hover:opacity-70 transition-opacity"
            >
              View Live <ArrowRight size={14} />
@@ -63,13 +64,5 @@ export function ProjectCard({ project }: { project: Project }) {
         </div>
       </div>
     </motion.div>
-  );
-}
-
-function ArrowRight({ size }: { size: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12h14m-7-7 7 7-7 7"/>
-    </svg>
   );
 }

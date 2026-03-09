@@ -4,18 +4,22 @@
 import { useState, useEffect } from 'react';
 import { ProjectCard } from './ProjectCard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getProjects, Project } from '@/lib/project-store';
+import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 
 export function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [data, setData] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate initial load from local storage
-    const data = getProjects();
-    setProjects(data);
+    setData(getPortfolioData());
     setLoading(false);
+    
+    const handleUpdate = () => setData(getPortfolioData());
+    window.addEventListener('portfolio-update', handleUpdate);
+    return () => window.removeEventListener('portfolio-update', handleUpdate);
   }, []);
+
+  if (!data && !loading) return null;
 
   return (
     <section id="projects" className="py-24">
@@ -44,10 +48,10 @@ export function Projects() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
+            {data?.projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
-            {projects.length === 0 && (
+            {data?.projects.length === 0 && (
               <p className="col-span-full text-center py-20 text-muted-foreground">
                 No projects added yet. Check back soon!
               </p>

@@ -1,21 +1,34 @@
 
 "use client"
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MessageCircle, Github, Linkedin, Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-
-const socials = [
-  { icon: <Mail />, label: 'Email', value: 'angelo@technomedia.com', href: 'mailto:angelo@technomedia.com' },
-  { icon: <MessageCircle />, label: 'WhatsApp', value: '+20 123 456 7890', href: 'https://wa.me/201234567890' },
-  { icon: <Linkedin />, label: 'LinkedIn', value: '/in/angelos', href: '#' },
-  { icon: <Github />, label: 'GitHub', value: '@angelos-dev', href: '#' },
-];
+import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 
 export function Contact() {
+  const [data, setData] = useState<PortfolioData | null>(null);
+
+  useEffect(() => {
+    setData(getPortfolioData());
+    const handleUpdate = () => setData(getPortfolioData());
+    window.addEventListener('portfolio-update', handleUpdate);
+    return () => window.removeEventListener('portfolio-update', handleUpdate);
+  }, []);
+
+  if (!data) return null;
+
+  const socials = [
+    { icon: <Mail />, label: 'Email', value: data.contact.email, href: `mailto:${data.contact.email}` },
+    { icon: <MessageCircle />, label: 'WhatsApp', value: data.contact.whatsapp, href: `https://wa.me/${data.contact.whatsapp.replace(/\s+/g, '')}` },
+    { icon: <Linkedin />, label: 'LinkedIn', value: data.contact.linkedin, href: `https://linkedin.com${data.contact.linkedin}` },
+    { icon: <Github />, label: 'GitHub', value: data.contact.github, href: `https://github.com/${data.contact.github.replace('@', '')}` },
+  ];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
@@ -72,34 +85,18 @@ export function Contact() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest ml-1">Name</label>
-                    <Input 
-                      placeholder="Your Name" 
-                      className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary"
-                      required
-                    />
+                    <Input placeholder="Your Name" className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary" required />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest ml-1">Email</label>
-                    <Input 
-                      type="email" 
-                      placeholder="Your Email" 
-                      className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary"
-                      required
-                    />
+                    <Input type="email" placeholder="Your Email" className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary" required />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest ml-1">Message</label>
-                  <Textarea 
-                    placeholder="Tell me about your project..." 
-                    className="bg-white/5 border-white/10 min-h-[150px] rounded-xl focus-visible:ring-primary py-4"
-                    required
-                  />
+                  <Textarea placeholder="Tell me about your project..." className="bg-white/5 border-white/10 min-h-[150px] rounded-xl focus-visible:ring-primary py-4" required />
                 </div>
-                <Button 
-                  type="submit" 
-                  className="w-full h-14 bg-primary text-white font-bold rounded-xl shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-2"
-                >
+                <Button type="submit" className="w-full h-14 bg-primary text-white font-bold rounded-xl shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-2">
                   Send Message <Send size={18} />
                 </Button>
               </form>
