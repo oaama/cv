@@ -1,26 +1,22 @@
-
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MessageCircle, Github, Linkedin, Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
+import { initialPortfolioData } from '@/lib/portfolio-store';
+import { useFirestore, useDoc } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 export function Contact() {
-  const [data, setData] = useState<PortfolioData | null>(null);
+  const db = useFirestore();
+  const configRef = useMemo(() => doc(db, 'settings', 'portfolio'), [db]);
+  const { data: remoteConfig, loading } = useDoc<any>(configRef);
 
-  useEffect(() => {
-    setData(getPortfolioData());
-    const handleUpdate = () => setData(getPortfolioData());
-    window.addEventListener('portfolio-update', handleUpdate);
-    return () => window.removeEventListener('portfolio-update', handleUpdate);
-  }, []);
-
-  if (!data) return null;
+  const data = remoteConfig || initialPortfolioData;
 
   const socials = [
     { 
@@ -39,7 +35,7 @@ export function Contact() {
       icon: <Linkedin />, 
       label: 'LinkedIn', 
       value: 'LinkedIn Profile', 
-      href: data.contact.linkedin.startsWith('http') ? data.contact.linkedin : `https://linkedin.com${data.contact.linkedin}` 
+      href: data.contact.linkedin.startsWith('http') ? data.contact.linkedin : `https://linkedin.com/in/${data.contact.linkedin.replace(/.*\//, '')}` 
     },
     { 
       icon: <Github />, 
@@ -68,6 +64,8 @@ export function Contact() {
       description: "Redirecting you to start a conversation.",
     });
   };
+
+  if (loading) return null;
 
   return (
     <section id="contact" className="py-24 bg-card/20 border-t border-white/5 scroll-mt-32">

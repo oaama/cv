@@ -1,23 +1,20 @@
 
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
+import { initialPortfolioData } from '@/lib/portfolio-store';
+import { useFirestore, useDoc } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 export function Hero() {
-  const [data, setData] = useState<PortfolioData | null>(null);
+  const db = useFirestore();
+  const configRef = useMemo(() => doc(db, 'settings', 'portfolio'), [db]);
+  const { data: remoteConfig, loading } = useDoc<any>(configRef);
 
-  useEffect(() => {
-    setData(getPortfolioData());
-    const handleUpdate = () => setData(getPortfolioData());
-    window.addEventListener('portfolio-update', handleUpdate);
-    return () => window.removeEventListener('portfolio-update', handleUpdate);
-  }, []);
-
-  if (!data) return null;
+  const data = remoteConfig || initialPortfolioData;
 
   const container = {
     hidden: { opacity: 0 },
@@ -67,6 +64,8 @@ export function Hero() {
       </motion.span>
     );
   };
+
+  if (loading) return null;
 
   return (
     <section className="relative min-h-[90vh] md:min-h-screen flex items-center pt-32 pb-16 overflow-hidden bg-background">

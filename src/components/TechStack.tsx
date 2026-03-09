@@ -1,22 +1,20 @@
-
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { getPortfolioData, PortfolioData, TechItem } from '@/lib/portfolio-store';
+import { initialPortfolioData } from '@/lib/portfolio-store';
 import { getTechIcon } from '@/lib/icons';
+import { useFirestore, useDoc } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 export function TechStack() {
-  const [data, setData] = useState<PortfolioData | null>(null);
+  const db = useFirestore();
+  const configRef = useMemo(() => doc(db, 'settings', 'portfolio'), [db]);
+  const { data: remoteConfig, loading } = useDoc<any>(configRef);
 
-  useEffect(() => {
-    setData(getPortfolioData());
-    const handleUpdate = () => setData(getPortfolioData());
-    window.addEventListener('portfolio-update', handleUpdate);
-    return () => window.removeEventListener('portfolio-update', handleUpdate);
-  }, []);
+  const data = remoteConfig || initialPortfolioData;
 
-  if (!data) return null;
+  if (loading) return null;
 
   return (
     <section id="stack" className="py-24 scroll-mt-32">
@@ -27,7 +25,7 @@ export function TechStack() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-          {data.techStack.map((item, i) => (
+          {data.techStack.map((item: any, i: number) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 20 }}

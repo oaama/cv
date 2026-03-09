@@ -1,23 +1,22 @@
 
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Building2, Sparkles } from 'lucide-react';
 import Image from 'next/image';
-import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
+import { initialPortfolioData } from '@/lib/portfolio-store';
+import { useFirestore, useDoc } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 export function About() {
-  const [data, setData] = useState<PortfolioData | null>(null);
+  const db = useFirestore();
+  const configRef = useMemo(() => doc(db, 'settings', 'portfolio'), [db]);
+  const { data: remoteConfig, loading } = useDoc<any>(configRef);
 
-  useEffect(() => {
-    setData(getPortfolioData());
-    const handleUpdate = () => setData(getPortfolioData());
-    window.addEventListener('portfolio-update', handleUpdate);
-    return () => window.removeEventListener('portfolio-update', handleUpdate);
-  }, []);
+  const data = remoteConfig || initialPortfolioData;
 
-  if (!data) return null;
+  if (loading) return null;
 
   return (
     <section id="about" className="py-20 md:py-32 bg-card/30 border-y border-white/5 scroll-mt-32">
@@ -56,7 +55,7 @@ export function About() {
             </div>
 
             <div className="mt-16 md:mt-24 grid grid-cols-1 sm:grid-cols-2 gap-8 text-left w-full">
-              {data.about.ventures.map((v, i) => (
+              {data.about.ventures.map((v: any, i: number) => (
                 <div key={i} className="glass p-8 md:p-10 rounded-[2rem] border-white/5 hover:border-primary/30 transition-all duration-300">
                   <div className="mb-6 w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
                     {i === 0 ? <Building2 className="text-primary" size={24} /> : <Sparkles className="text-primary" size={24} />}

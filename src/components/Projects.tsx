@@ -1,25 +1,17 @@
 
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { ProjectCard } from './ProjectCard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
+import { useFirestore, useCollection } from '@/firebase';
+import { collection, query, orderBy } from 'firebase/firestore';
+import { Project } from '@/lib/portfolio-store';
 
 export function Projects() {
-  const [data, setData] = useState<PortfolioData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setData(getPortfolioData());
-    setLoading(false);
-    
-    const handleUpdate = () => setData(getPortfolioData());
-    window.addEventListener('portfolio-update', handleUpdate);
-    return () => window.removeEventListener('portfolio-update', handleUpdate);
-  }, []);
-
-  if (!data && !loading) return null;
+  const db = useFirestore();
+  const projectsQuery = useMemo(() => query(collection(db, 'projects')), [db]);
+  const { data: projects, loading } = useCollection<Project>(projectsQuery);
 
   return (
     <section id="projects" className="py-24 scroll-mt-32">
@@ -43,10 +35,10 @@ export function Projects() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data?.projects.map((project) => (
+            {projects?.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
-            {data?.projects.length === 0 && (
+            {(!projects || projects.length === 0) && (
               <p className="col-span-full text-center py-20 text-muted-foreground">
                 No projects added yet. Check back soon!
               </p>

@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -24,19 +24,37 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Upload, Loader2, Save } from 'lucide-react';
+import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, LayoutGrid, Upload, Loader2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { getPortfolioData, savePortfolioData, PortfolioData, TechItem, Venture, Project } from '@/lib/portfolio-store';
+import { 
+  PortfolioData, 
+  TechItem, 
+  Venture, 
+  Project, 
+  savePortfolioDataToFirestore,
+  saveProjectToFirestore,
+  initialPortfolioData
+} from '@/lib/portfolio-store';
 import { getTechIcon } from '@/lib/icons';
+import { useFirestore, useDoc, useCollection } from '@/firebase';
+import { doc, deleteDoc, collection } from 'firebase/firestore';
 
 export default function DashAdminPage() {
   const router = useRouter();
-  const [data, setData] = useState<PortfolioData | null>(null);
+  const db = useFirestore();
+  
+  // Real-time data from Firestore
+  const configRef = useMemo(() => doc(db, 'settings', 'portfolio'), [db]);
+  const projectsQuery = useMemo(() => collection(db, 'projects'), [db]);
+  
+  const { data: remoteConfig, loading: configLoading } = useDoc<any>(configRef);
+  const { data: remoteProjects, loading: projectsLoading } = useCollection<Project>(projectsQuery);
+
+  const [localData, setLocalData] = useState<PortfolioData>(initialPortfolioData);
   const [newTechCategory, setNewTechCategory] = useState<TechItem['category']>('Web');
   const [techInput, setTechInput] = useState('');
   const [isUploading, setIsUploading] = useState<string | null>(null);
   
-  const heroFileRef = useRef<HTMLInputElement>(null);
   const aboutFileRef = useRef<HTMLInputElement>(null);
   const projectFileRef = useRef<HTMLInputElement>(null);
 
@@ -46,16 +64,26 @@ export default function DashAdminPage() {
     name: '', description: '', tech: '', image: 'https://picsum.photos/seed/1/800/600', demo: '', github: ''
   });
 
+  // Sync local state with remote data
+  useEffect(() => {
+    if (remoteConfig) {
+      setLocalData(prev => ({
+        ...prev,
+        ...remoteConfig,
+        projects: remoteProjects || []
+      }));
+    } else if (!configLoading && !remoteConfig) {
+      // First time initialization if Firestore is empty
+      savePortfolioDataToFirestore(db, initialPortfolioData);
+    }
+  }, [remoteConfig, remoteProjects, configLoading, db]);
+
   useEffect(() => {
     const isAuth = localStorage.getItem('is_admin_auth');
     if (!isAuth) {
       router.push('/login');
-    } else {
-      setData(getPortfolioData());
     }
   }, [router]);
-
-  if (!data) return null;
 
   const handleLogout = () => {
     localStorage.removeItem('is_admin_auth');
@@ -63,27 +91,27 @@ export default function DashAdminPage() {
   };
 
   const persistData = (newData: PortfolioData) => {
-    setData(newData);
-    savePortfolioData(newData);
-    toast({ title: "Changes Saved", description: "Updated locally in your browser." });
+    setLocalData(newData);
+    savePortfolioDataToFirestore(db, newData);
+    toast({ title: "Updated", description: "Changes synced with Cloud Firestore." });
   };
 
   const updateHero = (field: keyof PortfolioData['hero'], value: string) => {
-    persistData({ ...data, hero: { ...data.hero, [field]: value } });
+    persistData({ ...localData, hero: { ...localData.hero, [field]: value } });
   };
 
   const updateContact = (field: keyof PortfolioData['contact'], value: string) => {
-    persistData({ ...data, contact: { ...data.contact, [field]: value } });
+    persistData({ ...localData, contact: { ...localData.contact, [field]: value } });
   };
 
   const updateAbout = (field: keyof Omit<PortfolioData['about'], 'ventures'>, value: string) => {
-    persistData({ ...data, about: { ...data.about, [field]: value } });
+    persistData({ ...localData, about: { ...localData.about, [field]: value } });
   };
 
   const updateVenture = (index: number, field: keyof Venture, value: string) => {
-    const newVentures = [...data.about.ventures];
+    const newVentures = [...localData.about.ventures];
     newVentures[index] = { ...newVentures[index], [field]: value };
-    persistData({ ...data, about: { ...data.about, ventures: newVentures } });
+    persistData({ ...localData, about: { ...localData.about, ventures: newVentures } });
   };
 
   const handleFileUpload = async (file: File, path: string, onComplete: (url: string) => void) => {
@@ -94,32 +122,30 @@ export default function DashAdminPage() {
         const base64String = reader.result as string;
         onComplete(base64String);
         setIsUploading(null);
-        toast({ title: "Success", description: "Image saved to LocalStorage." });
-      };
-      reader.onerror = () => {
-        setIsUploading(null);
-        toast({ title: "Error", description: "Failed to read file.", variant: "destructive" });
       };
       reader.readAsDataURL(file);
     } catch (error) {
       setIsUploading(null);
-      toast({ title: "Failed", description: "Could not process image.", variant: "destructive" });
+      toast({ title: "Error", description: "Failed to process image.", variant: "destructive" });
     }
   };
 
   const handleSaveProject = () => {
-    const newProjects = editingProjectId 
-      ? data.projects.map(p => p.id === editingProjectId ? { ...projectForm, id: p.id } : p)
-      : [...data.projects, { ...projectForm, id: Date.now().toString() }];
+    const projectId = editingProjectId || Date.now().toString();
+    const projectToSave: Project = { ...projectForm, id: projectId };
     
-    persistData({ ...data, projects: newProjects });
+    saveProjectToFirestore(db, projectToSave);
+    
     setIsAddingProject(false);
     setEditingProjectId(null);
     setProjectForm({ name: '', description: '', tech: '', image: 'https://picsum.photos/seed/1/800/600', demo: '', github: '' });
+    toast({ title: "Project Saved", description: "Added to your cloud collection." });
   };
 
-  const deleteProject = (id: string) => {
-    persistData({ ...data, projects: data.projects.filter(p => p.id !== id) });
+  const handleDeleteProject = (id: string) => {
+    const projectRef = doc(db, 'projects', id);
+    deleteDoc(projectRef);
+    toast({ title: "Project Removed", description: "Deleted from Firestore." });
   };
 
   const addTech = () => {
@@ -129,13 +155,15 @@ export default function DashAdminPage() {
       name: techInput.trim(), 
       category: newTechCategory 
     };
-    persistData({ ...data, techStack: [...data.techStack, newItem] });
+    persistData({ ...localData, techStack: [...localData.techStack, newItem] });
     setTechInput('');
   };
 
   const removeTech = (id: string) => {
-    persistData({ ...data, techStack: data.techStack.filter(t => t.id !== id) });
+    persistData({ ...localData, techStack: localData.techStack.filter(t => t.id !== id) });
   };
+
+  if (configLoading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="animate-spin text-primary" size={48}/></div>;
 
   return (
     <main className="min-h-screen pt-24 md:pt-32 pb-12 bg-background">
@@ -144,7 +172,7 @@ export default function DashAdminPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
             <h1 className="text-2xl md:text-4xl font-headline font-bold mb-1">Portfolio Manager</h1>
-            <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Client-Side Storage Only</p>
+            <p className="text-xs text-primary font-bold uppercase tracking-widest">Connected to Firebase Cloud</p>
           </div>
           <Button variant="outline" className="border-white/10 text-muted-foreground hover:text-destructive gap-2 rounded-xl" onClick={handleLogout}>
             <LogOut size={16} /> Logout
@@ -167,16 +195,16 @@ export default function DashAdminPage() {
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Your Name</label>
-                  <Input value={data.hero.name} onChange={e => updateHero('name', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                  <Input value={localData.hero.name} onChange={e => updateHero('name', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Specialty / Title</label>
-                  <Input value={data.hero.specialty} onChange={e => updateHero('specialty', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                  <Input value={localData.hero.specialty} onChange={e => updateHero('specialty', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Short Bio</label>
-                <Textarea value={data.hero.bio} onChange={e => updateHero('bio', e.target.value)} rows={3} className="bg-white/5 border-white/10 rounded-2xl p-4" />
+                <Textarea value={localData.hero.bio} onChange={e => updateHero('bio', e.target.value)} rows={3} className="bg-white/5 border-white/10 rounded-2xl p-4" />
               </div>
             </div>
           </TabsContent>
@@ -186,13 +214,13 @@ export default function DashAdminPage() {
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">About Title</label>
-                  <Input value={data.about.title} onChange={e => updateAbout('title', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                  <Input value={localData.about.title} onChange={e => updateAbout('title', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Profile Photo</label>
                   <div className="flex items-center gap-4">
                     <Input 
-                      value={data.about.imageUrl || ''} 
+                      value={localData.about.imageUrl || ''} 
                       onChange={e => updateAbout('imageUrl', e.target.value)} 
                       placeholder="Image URL" 
                       className="bg-white/5 border-white/10 h-14 rounded-2xl" 
@@ -211,13 +239,13 @@ export default function DashAdminPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Main Description</label>
-                <Textarea value={data.about.bio} onChange={e => updateAbout('bio', e.target.value)} rows={4} className="bg-white/5 border-white/10 rounded-2xl p-4" />
+                <Textarea value={localData.about.bio} onChange={e => updateAbout('bio', e.target.value)} rows={4} className="bg-white/5 border-white/10 rounded-2xl p-4" />
               </div>
 
               <div className="pt-6 border-t border-white/5 space-y-6">
                 <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Featured Ventures</h4>
                 <div className="grid gap-4">
-                  {data.about.ventures.map((v, i) => (
+                  {localData.about.ventures.map((v, i) => (
                     <div key={i} className="p-6 bg-white/5 rounded-3xl border border-white/5 grid md:grid-cols-3 gap-6">
                       <div className="space-y-1">
                         <label className="text-[9px] uppercase font-bold text-muted-foreground ml-1">Title</label>
@@ -256,7 +284,7 @@ export default function DashAdminPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.projects.map((p) => (
+                    {(remoteProjects || []).map((p) => (
                       <TableRow key={p.id} className="border-white/5 hover:bg-white/[0.01]">
                         <TableCell className="font-bold px-8 py-5">{p.name}</TableCell>
                         <TableCell className="text-xs text-muted-foreground">{p.tech}</TableCell>
@@ -264,7 +292,7 @@ export default function DashAdminPage() {
                           <Button size="icon" variant="ghost" className="h-10 w-10 hover:bg-primary/10 rounded-xl" onClick={() => { setEditingProjectId(p.id); setProjectForm({...p}); setIsAddingProject(true); }}>
                             <Edit size={16}/>
                           </Button>
-                          <Button size="icon" variant="ghost" className="h-10 w-10 text-muted-foreground hover:text-destructive rounded-xl" onClick={() => deleteProject(p.id)}>
+                          <Button size="icon" variant="ghost" className="h-10 w-10 text-muted-foreground hover:text-destructive rounded-xl" onClick={() => handleDeleteProject(p.id)}>
                             <Trash2 size={16}/>
                           </Button>
                         </TableCell>
@@ -306,7 +334,7 @@ export default function DashAdminPage() {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-                {data.techStack.map(t => (
+                {localData.techStack.map(t => (
                   <div key={t.id} className="group relative p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] flex flex-col items-center gap-3 hover:border-primary/30 transition-all text-center">
                     <div className="text-primary">{getTechIcon(t.name, 28)}</div>
                     <p className="font-bold text-sm">{t.name}</p>
@@ -329,19 +357,19 @@ export default function DashAdminPage() {
               <div className="grid md:grid-cols-2 gap-10">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Public Email</label>
-                  <Input value={data.contact.email} onChange={e => updateContact('email', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                  <Input value={localData.contact.email} onChange={e => updateContact('email', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">WhatsApp Number</label>
-                  <Input value={data.contact.whatsapp} onChange={e => updateContact('whatsapp', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                  <Input value={localData.contact.whatsapp} onChange={e => updateContact('whatsapp', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">LinkedIn Link</label>
-                  <Input value={data.contact.linkedin} onChange={e => updateContact('linkedin', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                  <Input value={localData.contact.linkedin} onChange={e => updateContact('linkedin', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">GitHub Username</label>
-                  <Input value={data.contact.github} onChange={e => updateContact('github', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
+                  <Input value={localData.contact.github} onChange={e => updateContact('github', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-2xl" />
                 </div>
               </div>
             </div>

@@ -1,6 +1,10 @@
 
 "use client"
 
+import { doc, setDoc, Firestore } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
+
 export interface Venture {
   title: string;
   role: string;
@@ -46,10 +50,7 @@ export interface PortfolioData {
   };
 }
 
-const STORAGE_KEY = 'apex_portfolio_final_v10';
-
-// NOTE: Edit these values directly before building for production if you don't use a database.
-const initialData: PortfolioData = {
+export const initialPortfolioData: PortfolioData = {
   hero: {
     name: "Angelo",
     specialty: "Web & Flutter",
@@ -73,17 +74,7 @@ const initialData: PortfolioData = {
       }
     ]
   },
-  projects: [
-    {
-      id: "1",
-      name: "Royal Cut",
-      description: "A premium barber booking mobile app designed for seamless scheduling and barber shop management.",
-      tech: "Flutter, Firebase, Dart",
-      image: "https://picsum.photos/seed/88/800/600",
-      demo: "https://example.com",
-      github: "https://github.com"
-    }
-  ],
+  projects: [],
   techStack: [
     { id: '1', name: 'React', category: 'Web' },
     { id: '2', name: 'Flutter', category: 'Mobile' },
@@ -100,18 +91,32 @@ const initialData: PortfolioData = {
   }
 };
 
-export const getPortfolioData = (): PortfolioData => {
-  if (typeof window === 'undefined') return initialData;
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
-    return initialData;
-  }
-  return JSON.parse(stored);
+export const savePortfolioDataToFirestore = (db: Firestore, data: PortfolioData) => {
+  const configRef = doc(db, 'settings', 'portfolio');
+  
+  // We exclude 'projects' from this document as they live in their own collection
+  const { projects, ...configData } = data;
+
+  setDoc(configRef, configData, { merge: true })
+    .catch(async (serverError) => {
+      const permissionError = new FirestorePermissionError({
+        path: configRef.path,
+        operation: 'write',
+        requestResourceData: configData,
+      });
+      errorEmitter.emit('permission-error', permissionError);
+    });
 };
 
-export const savePortfolioData = (data: PortfolioData) => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  window.dispatchEvent(new Event('portfolio-update'));
+export const saveProjectToFirestore = (db: Firestore, project: Project) => {
+  const projectRef = doc(db, 'projects', project.id);
+  setDoc(projectRef, project, { merge: true })
+    .catch(async (serverError) => {
+      const permissionError = new FirestorePermissionError({
+        path: projectRef.path,
+        operation: 'write',
+        requestResourceData: project,
+      });
+      errorEmitter.emit('permission-error', permissionError);
+    });
 };
