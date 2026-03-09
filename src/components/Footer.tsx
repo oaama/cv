@@ -13,11 +13,11 @@ export function Footer() {
           <div className="px-2 h-8 bg-primary/20 flex items-center justify-center rounded-lg">
             <span className="font-headline font-bold text-primary">Eng</span>
           </div>
-          <span className="font-headline font-bold text-lg tracking-tighter">ANGELO</span>
+          <span className="font-headline font-bold text-xl tracking-tighter uppercase">ANGELO</span>
         </div>
 
-        <p className="text-sm text-muted-foreground">
-          © {currentYear} Apex Technoscapes. Designed with precision by Angelo.
+        <p className="text-sm text-muted-foreground font-medium">
+          © {currentYear} Developed & Designed with passion by Angelo.
         </p>
 
         <div className="flex items-center gap-8">
