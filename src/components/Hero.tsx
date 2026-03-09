@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -135,13 +136,6 @@ export function Hero() {
                       <Sparkles size={100} className="text-primary/20" />
                    </div>
                 )}
-              </div>
-              
-              <div className="absolute -bottom-6 -right-6 glass p-6 rounded-3xl border-white/10 shadow-2xl">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-xs font-bold uppercase tracking-widest">Available for Hire</span>
-                </div>
               </div>
             </div>
           </motion.div>

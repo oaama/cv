@@ -1,9 +1,9 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Building2, Sparkles, User } from 'lucide-react';
-import Image from 'next/image';
 import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 
 export function About() {
@@ -30,27 +30,6 @@ export function About() {
           >
             <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-primary/20 rounded-full blur-3xl -z-10" />
             
-            {/* Profile Image Above Title */}
-            <div className="mb-10 flex justify-center">
-              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full p-1 bg-gradient-to-tr from-primary to-accent shadow-2xl shadow-primary/20">
-                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-background bg-white/5">
-                  {data.about.imageUrl ? (
-                    <Image 
-                      src={data.about.imageUrl} 
-                      alt="Angelo" 
-                      fill 
-                      className="object-cover"
-                      data-ai-hint="man portrait"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-primary/40">
-                      <User size={60} />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
             <h2 className="text-4xl md:text-5xl font-headline font-bold mb-8 tracking-tight">
               {data.about.title}
             </h2>
