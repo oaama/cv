@@ -1,15 +1,21 @@
 
 "use client"
 
-import { useFirestore, useCollection } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { useState, useEffect } from 'react';
 import { ProjectCard } from './ProjectCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getProjects, Project } from '@/lib/project-store';
 
 export function Projects() {
-  const db = useFirestore();
-  const projectsQuery = db ? query(collection(db, 'projects'), orderBy('createdAt', 'desc')) : null;
-  const { data: projects, loading } = useCollection(projectsQuery);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial load from local storage
+    const data = getProjects();
+    setProjects(data);
+    setLoading(false);
+  }, []);
 
   return (
     <section id="projects" className="py-24">
@@ -38,10 +44,10 @@ export function Projects() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects?.map((project: any) => (
+            {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
-            {projects?.length === 0 && (
+            {projects.length === 0 && (
               <p className="col-span-full text-center py-20 text-muted-foreground">
                 No projects added yet. Check back soon!
               </p>

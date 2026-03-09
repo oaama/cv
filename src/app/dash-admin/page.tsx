@@ -3,8 +3,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, useFirestore, useUser, useCollection } from '@/firebase';
-import { collection, addDoc, deleteDoc, updateDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -28,18 +26,11 @@ import {
 } from '@/components/ui/dialog';
 import { Plus, Trash2, Edit, LogOut } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
+import { getProjects, addProject, deleteProject, updateProject, Project } from '@/lib/project-store';
 
 export default function DashAdminPage() {
-  const { user, loading: authLoading } = useUser();
-  const auth = useAuth();
-  const db = useFirestore();
   const router = useRouter();
-  
-  const projectsQuery = query(collection(db!, 'projects'), orderBy('createdAt', 'desc'));
-  const { data: projects, loading: projectsLoading } = useCollection(projectsQuery);
-
+  const [projects, setProjects] = useState<Project[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -53,62 +44,50 @@ export default function DashAdminPage() {
   });
 
   useEffect(() => {
-    if (!authLoading && !user) {
+    // Simple local auth check
+    const isAuth = localStorage.getItem('is_admin_auth');
+    if (!isAuth) {
       router.push('/login');
+    } else {
+      setProjects(getProjects());
     }
-  }, [user, authLoading, router]);
+  }, [router]);
 
   const handleLogout = () => {
-    auth?.signOut();
+    localStorage.removeItem('is_admin_auth');
     router.push('/login');
   };
 
-  const handleAdd = async () => {
-    if (!db) return;
-    try {
-      await addDoc(collection(db, 'projects'), {
-        ...formData,
-        createdAt: serverTimestamp()
-      });
-      setFormData({ name: '', description: '', tech: '', image: 'https://picsum.photos/seed/1/800/600', demo: '', github: '', drive: '' });
-      setIsAdding(false);
-      toast({ title: "Project Added", description: "Live on the site now." });
-    } catch (e: any) {
-      const error = new FirestorePermissionError({ path: 'projects', operation: 'create', requestResourceData: formData });
-      errorEmitter.emit('permission-error', error);
-    }
+  const refreshProjects = () => {
+    setProjects(getProjects());
   };
 
-  const handleDelete = async (id: string) => {
-    if (!db) return;
-    try {
-      await deleteDoc(doc(db, 'projects', id));
-      toast({ title: "Project Deleted", variant: "destructive" });
-    } catch (e: any) {
-      const error = new FirestorePermissionError({ path: `projects/${id}`, operation: 'delete' });
-      errorEmitter.emit('permission-error', error);
-    }
+  const handleAdd = () => {
+    addProject(formData);
+    setFormData({ name: '', description: '', tech: '', image: 'https://picsum.photos/seed/1/800/600', demo: '', github: '', drive: '' });
+    setIsAdding(false);
+    toast({ title: "Project Added", description: "Saved locally." });
+    refreshProjects();
   };
 
-  const startEditing = (p: any) => {
+  const handleDelete = (id: string) => {
+    deleteProject(id);
+    toast({ title: "Project Deleted", variant: "destructive" });
+    refreshProjects();
+  };
+
+  const startEditing = (p: Project) => {
     setEditingId(p.id);
     setFormData({ ...p });
   };
 
-  const handleUpdate = async () => {
-    if (!db || !editingId) return;
-    try {
-      const { id, ...dataToUpdate } = formData as any;
-      await updateDoc(doc(db, 'projects', editingId), dataToUpdate);
-      setEditingId(null);
-      toast({ title: "Project Updated" });
-    } catch (e: any) {
-      const error = new FirestorePermissionError({ path: `projects/${editingId}`, operation: 'update', requestResourceData: formData });
-      errorEmitter.emit('permission-error', error);
-    }
+  const handleUpdate = () => {
+    if (!editingId) return;
+    updateProject({ ...formData, id: editingId });
+    setEditingId(null);
+    toast({ title: "Project Updated" });
+    refreshProjects();
   };
-
-  if (authLoading || !user) return <div className="min-h-screen flex items-center justify-center">Verifying session...</div>;
 
   return (
     <main className="min-h-screen pt-32 pb-24 bg-background">
@@ -117,7 +96,7 @@ export default function DashAdminPage() {
         <div className="flex items-center justify-between mb-12">
           <div>
             <h1 className="text-4xl font-headline font-bold mb-2">Portfolio Management</h1>
-            <p className="text-muted-foreground">Add and manage your projects in real-time.</p>
+            <p className="text-muted-foreground">Manage your projects locally (LocalStorage).</p>
           </div>
           
           <div className="flex gap-4">
@@ -164,7 +143,7 @@ export default function DashAdminPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {projects?.map((p: any) => (
+              {projects.map((p) => (
                 <TableRow key={p.id} className="border-white/5 hover:bg-white/5 transition-colors">
                   <TableCell className="font-bold py-6">{p.name}</TableCell>
                   <TableCell className="py-6">
