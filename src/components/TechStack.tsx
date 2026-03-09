@@ -1,8 +1,9 @@
+
 "use client"
 
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { initialPortfolioData } from '@/lib/portfolio-store';
+import { initialPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 import { getTechIcon } from '@/lib/icons';
 import { useFirestore, useDoc } from '@/firebase';
 import { doc } from 'firebase/firestore';
@@ -12,7 +13,7 @@ export function TechStack() {
   const configRef = useMemo(() => doc(db, 'settings', 'portfolio'), [db]);
   const { data: remoteConfig, loading } = useDoc<any>(configRef);
 
-  const data = remoteConfig || initialPortfolioData;
+  const data: PortfolioData = remoteConfig ? { ...initialPortfolioData, ...remoteConfig } : initialPortfolioData;
 
   if (loading) return null;
 

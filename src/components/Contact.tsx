@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useMemo } from 'react';
@@ -7,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-import { initialPortfolioData } from '@/lib/portfolio-store';
+import { initialPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 import { useFirestore, useDoc } from '@/firebase';
 import { doc } from 'firebase/firestore';
 
@@ -16,7 +17,7 @@ export function Contact() {
   const configRef = useMemo(() => doc(db, 'settings', 'portfolio'), [db]);
   const { data: remoteConfig, loading } = useDoc<any>(configRef);
 
-  const data = remoteConfig || initialPortfolioData;
+  const data: PortfolioData = remoteConfig ? { ...initialPortfolioData, ...remoteConfig } : initialPortfolioData;
 
   const socials = [
     { 
