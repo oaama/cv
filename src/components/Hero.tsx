@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 
@@ -72,18 +72,13 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-background">
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-5xl">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-left"
           >
-            <span className="inline-block py-1.5 px-4 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-8">
-              <span className="flex items-center gap-2 justify-center">
-                <Sparkles size={14} /> Software Engineer
-              </span>
-            </span>
-            
             <h1 className="text-5xl md:text-7xl lg:text-9xl font-headline font-bold leading-[0.9] mb-8 tracking-tighter">
               <AnimatedText text={data.hero.name} /> <br />
               <span className="text-muted-foreground">
@@ -92,11 +87,11 @@ export function Hero() {
               <AnimatedText text={data.hero.specialty} className="text-gradient" />
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl leading-relaxed">
               {data.hero.bio}
             </p>
 
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="flex flex-wrap gap-4 justify-start">
               <Link 
                 href="/#projects" 
                 className="group flex items-center gap-2 px-10 py-5 bg-primary text-white rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
