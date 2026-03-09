@@ -43,7 +43,6 @@ export default function DashAdminPage() {
   const aboutFileRef = useRef<HTMLInputElement>(null);
   const projectFileRef = useRef<HTMLInputElement>(null);
 
-  // Project Form State
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [projectForm, setProjectForm] = useState<Omit<Project, 'id'>>({
@@ -161,16 +160,18 @@ export default function DashAdminPage() {
         </div>
 
         <Tabs defaultValue="hero" className="space-y-8">
-          <TabsList className="bg-white/5 border border-white/10 p-1 rounded-2xl w-full justify-start overflow-x-auto h-auto no-scrollbar">
-            <TabsTrigger value="hero" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><User size={16}/> Hero</TabsTrigger>
-            <TabsTrigger value="about" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><Briefcase size={16}/> About</TabsTrigger>
-            <TabsTrigger value="projects" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><LayoutGrid size={16}/> Projects</TabsTrigger>
-            <TabsTrigger value="tech" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><Cpu size={16}/> Tech Stack</TabsTrigger>
-            <TabsTrigger value="contact" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><Phone size={16}/> Contact</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto no-scrollbar pb-2">
+            <TabsList className="bg-white/5 border border-white/10 p-1 rounded-2xl w-max min-w-full justify-start overflow-visible h-auto flex-nowrap flex">
+              <TabsTrigger value="hero" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><User size={16}/> Hero</TabsTrigger>
+              <TabsTrigger value="about" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><Briefcase size={16}/> About</TabsTrigger>
+              <TabsTrigger value="projects" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><LayoutGrid size={16}/> Projects</TabsTrigger>
+              <TabsTrigger value="tech" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><Cpu size={16}/> Tech Stack</TabsTrigger>
+              <TabsTrigger value="contact" className="rounded-xl gap-2 py-3 px-4 md:px-6 whitespace-nowrap"><Phone size={16}/> Contact</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="hero">
-            <div className="glass p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-white/10 space-y-6">
+            <div className="glass p-5 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-white/10 space-y-6">
               <h3 className="text-xl md:text-2xl font-headline font-bold mb-4">Hero Section</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -228,7 +229,7 @@ export default function DashAdminPage() {
           </TabsContent>
 
           <TabsContent value="about">
-            <div className="glass p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-white/10 space-y-8">
+            <div className="glass p-5 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-white/10 space-y-8">
               <div className="space-y-6">
                 <h3 className="text-xl md:text-2xl font-headline font-bold">About Section</h3>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -274,16 +275,6 @@ export default function DashAdminPage() {
                         </div>
                      </div>
                    </div>
-                   <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Experience Title</label>
-                        <Input value={data.about.experienceTitle} onChange={e => updateAbout('experienceTitle', e.target.value)} className="bg-white/5 border-white/10 h-12" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sub-text</label>
-                        <Input value={data.about.experienceSub} onChange={e => updateAbout('experienceSub', e.target.value)} className="bg-white/5 border-white/10 h-12" />
-                      </div>
-                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Detailed Bio</label>
@@ -326,12 +317,12 @@ export default function DashAdminPage() {
                   <Plus size={18} className="mr-2"/> Add Project
                 </Button>
               </div>
-              <div className="overflow-x-auto">
-                <Table>
+              <div className="overflow-x-auto no-scrollbar">
+                <Table className="min-w-[600px] md:min-w-full">
                   <TableHeader className="bg-white/[0.01]">
                     <TableRow className="border-white/5 hover:bg-transparent">
-                      <TableHead className="py-6 pl-8 min-w-[200px]">Project Detail</TableHead>
-                      <TableHead className="py-6 min-w-[150px]">Technologies</TableHead>
+                      <TableHead className="py-6 pl-8">Project Detail</TableHead>
+                      <TableHead className="py-6">Technologies</TableHead>
                       <TableHead className="py-6 text-right pr-8">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -376,7 +367,7 @@ export default function DashAdminPage() {
           </TabsContent>
 
           <TabsContent value="tech">
-            <div className="glass p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-white/10 space-y-10">
+            <div className="glass p-5 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-white/10 space-y-10">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-white/5">
                 <div className="space-y-2">
                   <h3 className="text-xl md:text-2xl font-headline font-bold flex items-center gap-2">
@@ -446,7 +437,7 @@ export default function DashAdminPage() {
           </TabsContent>
 
           <TabsContent value="contact">
-            <div className="glass p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-white/10 space-y-6">
+            <div className="glass p-5 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-white/10 space-y-6">
               <h3 className="text-xl md:text-2xl font-headline font-bold">Contact & Socials</h3>
               <p className="text-xs md:text-sm text-muted-foreground mb-8">Update your contact points for potential clients.</p>
               <div className="grid md:grid-cols-2 gap-6 md:gap-8">
@@ -473,34 +464,34 @@ export default function DashAdminPage() {
 
         {isAddingProject && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 overflow-y-auto">
-             <div className="glass w-full max-w-2xl p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] border-white/10 my-8">
+             <div className="glass w-full max-w-2xl p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] border-white/10 my-8">
                 <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-2xl md:text-3xl font-headline font-bold text-gradient">{editingProjectId ? 'Edit Project' : 'New Project'}</h3>
+                  <h3 className="text-xl md:text-3xl font-headline font-bold text-gradient">{editingProjectId ? 'Edit Project' : 'New Project'}</h3>
                   <Button variant="ghost" size="icon" onClick={() => setIsAddingProject(false)} className="rounded-full">
                     <Plus size={24} className="rotate-45" />
                   </Button>
                 </div>
                 
-                <div className="space-y-6 mb-10">
-                   <div className="grid gap-3">
+                <div className="space-y-4 md:space-y-6 mb-8">
+                   <div className="grid gap-2">
                      <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Project Name</label>
-                     <Input placeholder="E.g. Royal Cut App" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} className="bg-white/5 border-white/10 h-12 md:h-14 rounded-xl text-base" />
+                     <Input placeholder="E.g. Royal Cut App" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
                    </div>
 
-                   <div className="grid gap-3">
+                   <div className="grid gap-2">
                      <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Description</label>
-                     <Input placeholder="Short summary" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} className="bg-white/5 border-white/10 h-12 md:h-14 rounded-xl" />
+                     <Input placeholder="Short summary" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
                    </div>
 
-                   <div className="grid md:grid-cols-2 gap-6">
-                      <div className="grid gap-3">
+                   <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                      <div className="grid gap-2">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Tech Stack (CSV)</label>
-                        <Input placeholder="React, Flutter..." value={projectForm.tech} onChange={e => setProjectForm({...projectForm, tech: e.target.value})} className="bg-white/5 border-white/10 h-12 md:h-14 rounded-xl" />
+                        <Input placeholder="React, Flutter..." value={projectForm.tech} onChange={e => setProjectForm({...projectForm, tech: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
                       </div>
-                      <div className="grid gap-3">
+                      <div className="grid gap-2">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Thumbnail</label>
                         <div className="space-y-2">
-                          <Input placeholder="https://..." value={projectForm.image} onChange={e => setProjectForm({...projectForm, image: e.target.value})} className="bg-white/5 border-white/10 h-12 md:h-14 rounded-xl" />
+                          <Input placeholder="https://..." value={projectForm.image} onChange={e => setProjectForm({...projectForm, image: e.target.value})} className="bg-white/5 border-white/10 h-12 rounded-xl" />
                           <div className="flex items-center gap-2">
                             <Button 
                               variant="secondary" 
@@ -527,16 +518,16 @@ export default function DashAdminPage() {
                       </div>
                    </div>
 
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="grid gap-2">
+                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid gap-1">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Live Demo</label>
                       <Input placeholder="Link" value={projectForm.demo} onChange={e => setProjectForm({...projectForm, demo: e.target.value})} className="bg-white/5 border-white/10 h-10 rounded-lg" />
                     </div>
-                    <div className="grid gap-2">
+                    <div className="grid gap-1">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Repo URL</label>
                       <Input placeholder="Link" value={projectForm.github} onChange={e => setProjectForm({...projectForm, github: e.target.value})} className="bg-white/5 border-white/10 h-10 rounded-lg" />
                     </div>
-                    <div className="grid gap-2">
+                    <div className="grid gap-1">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Drive</label>
                       <Input placeholder="Link" value={projectForm.drive} onChange={e => setProjectForm({...projectForm, drive: e.target.value})} className="bg-white/5 border-white/10 h-10 rounded-lg" />
                     </div>
