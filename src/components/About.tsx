@@ -1,9 +1,9 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Building2, Rocket, Sparkles } from 'lucide-react';
-import Image from 'next/image';
+import { Building2, Sparkles } from 'lucide-react';
 import { getPortfolioData, PortfolioData } from '@/lib/portfolio-store';
 
 export function About() {
@@ -21,58 +21,32 @@ export function About() {
   return (
     <section id="about" className="py-24 bg-card/30 border-y border-white/5 scroll-mt-32">
       <div className="container mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="absolute -top-10 -left-10 w-32 h-32 bg-primary/20 rounded-full blur-3xl" />
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-primary/20 rounded-full blur-3xl -z-10" />
             <h2 className="text-4xl md:text-5xl font-headline font-bold mb-8 tracking-tight">
               {data.about.title}
             </h2>
-            <div className="space-y-6 text-muted-foreground text-lg leading-relaxed">
+            <div className="space-y-6 text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto">
               <p>{data.about.bio}</p>
             </div>
 
-            <div className="mt-12 grid sm:grid-cols-2 gap-8">
+            <div className="mt-16 grid sm:grid-cols-2 gap-8 text-left">
               {data.about.ventures.map((v, i) => (
-                <div key={i} className="glass p-6 rounded-2xl border-white/5">
-                  <div className="mb-4">
+                <div key={i} className="glass p-8 rounded-[2rem] border-white/5 hover:border-primary/30 transition-colors">
+                  <div className="mb-6 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                     {i === 0 ? <Building2 className="text-primary" size={24} /> : <Sparkles className="text-primary" size={24} />}
                   </div>
-                  <h4 className="font-bold text-lg mb-1">{v.title}</h4>
-                  <p className="text-xs text-primary font-bold uppercase tracking-wider mb-3">{v.role}</p>
-                  <p className="text-sm text-muted-foreground">{v.description}</p>
+                  <h4 className="font-bold text-xl mb-1">{v.title}</h4>
+                  <p className="text-xs text-primary font-bold uppercase tracking-widest mb-4">{v.role}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{v.description}</p>
                 </div>
               ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="relative aspect-square"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/10 rounded-[3rem] -rotate-3 border border-white/10" />
-            <div className="absolute inset-0 bg-card border border-white/10 rounded-[3rem] rotate-3 overflow-hidden flex items-center justify-center relative">
-               {data.about.imageUrl ? (
-                 <Image 
-                   src={data.about.imageUrl} 
-                   alt="Angelo Profile" 
-                   fill 
-                   className="object-cover"
-                   data-ai-hint="man developer"
-                 />
-               ) : (
-                 <div className="text-center p-12">
-                    <Rocket size={120} className="text-primary/20 mb-6 mx-auto" />
-                    <p className="font-headline text-3xl font-bold tracking-tight mb-2">{data.about.experienceTitle}</p>
-                    <p className="text-muted-foreground uppercase tracking-widest text-sm font-bold">{data.about.experienceSub}</p>
-                 </div>
-               )}
             </div>
           </motion.div>
         </div>
