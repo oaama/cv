@@ -24,14 +24,16 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone } from 'lucide-react';
+import { Plus, Trash2, Edit, LogOut, User, Briefcase, Cpu, Phone, Sparkles } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { getPortfolioData, savePortfolioData, PortfolioData, TechItem, Venture, Project } from '@/lib/portfolio-store';
+import { getTechIcon } from '@/lib/icons';
 
 export default function DashAdminPage() {
   const router = useRouter();
   const [data, setData] = useState<PortfolioData | null>(null);
   const [newTechCategory, setNewTechCategory] = useState<TechItem['category']>('Web');
+  const [techInput, setTechInput] = useState('');
   
   // Project Form State
   const [isAddingProject, setIsAddingProject] = useState(false);
@@ -62,7 +64,6 @@ export default function DashAdminPage() {
     toast({ title: "Changes Saved", description: "Your portfolio is updated locally." });
   };
 
-  // Generic Update Handlers
   const updateHero = (field: keyof PortfolioData['hero'], value: string) => {
     persistData({ ...data, hero: { ...data.hero, [field]: value } });
   };
@@ -75,14 +76,12 @@ export default function DashAdminPage() {
     persistData({ ...data, about: { ...data.about, [field]: value } });
   };
 
-  // Venture Handlers
   const updateVenture = (index: number, field: keyof Venture, value: string) => {
     const newVentures = [...data.about.ventures];
     newVentures[index] = { ...newVentures[index], [field]: value };
     persistData({ ...data, about: { ...data.about, ventures: newVentures } });
   };
 
-  // Project Handlers
   const handleSaveProject = () => {
     const newProjects = editingProjectId 
       ? data.projects.map(p => p.id === editingProjectId ? { ...projectForm, id: p.id } : p)
@@ -98,11 +97,11 @@ export default function DashAdminPage() {
     persistData({ ...data, projects: data.projects.filter(p => p.id !== id) });
   };
 
-  // Tech Stack Handlers
-  const addTech = (name: string, category: TechItem['category']) => {
-    if (!name) return;
-    const newItem = { id: Date.now().toString(), name, category };
+  const addTech = () => {
+    if (!techInput) return;
+    const newItem = { id: Date.now().toString(), name: techInput, category: newTechCategory };
     persistData({ ...data, techStack: [...data.techStack, newItem] });
+    setTechInput('');
   };
 
   const removeTech = (id: string) => {
@@ -132,7 +131,6 @@ export default function DashAdminPage() {
             <TabsTrigger value="contact" className="rounded-xl gap-2"><Phone size={16}/> Contact</TabsTrigger>
           </TabsList>
 
-          {/* Hero Section Tab */}
           <TabsContent value="hero">
             <div className="glass p-10 rounded-[2.5rem] border-white/10 space-y-6">
               <h3 className="text-2xl font-headline font-bold mb-4">Hero Section</h3>
@@ -153,7 +151,6 @@ export default function DashAdminPage() {
             </div>
           </TabsContent>
 
-          {/* About Section Tab */}
           <TabsContent value="about">
             <div className="glass p-10 rounded-[2.5rem] border-white/10 space-y-8">
               <div className="space-y-6">
@@ -169,7 +166,7 @@ export default function DashAdminPage() {
               </div>
 
               <div className="space-y-6">
-                <h4 className="text-xl font-bold">Ventures (Zone A, Sidra, etc.)</h4>
+                <h4 className="text-xl font-bold">Ventures</h4>
                 {data.about.ventures.map((v, i) => (
                   <div key={i} className="p-6 bg-white/5 rounded-2xl border border-white/10 grid md:grid-cols-3 gap-4">
                     <Input placeholder="Venture Title" value={v.title} onChange={e => updateVenture(i, 'title', e.target.value)} />
@@ -181,7 +178,6 @@ export default function DashAdminPage() {
             </div>
           </TabsContent>
 
-          {/* Projects Tab */}
           <TabsContent value="projects">
             <div className="glass rounded-[2.5rem] border-white/10 overflow-hidden">
               <div className="p-8 border-b border-white/5 flex items-center justify-between">
@@ -218,37 +214,51 @@ export default function DashAdminPage() {
             </div>
           </TabsContent>
 
-          {/* Tech Stack Tab */}
           <TabsContent value="tech">
             <div className="glass p-10 rounded-[2.5rem] border-white/10 space-y-8">
-              <h3 className="text-2xl font-headline font-bold">Manage Tech Stack</h3>
-              <div className="flex gap-4 items-center">
-                <Input id="tech-name" placeholder="Tool Name (e.g. Next.js)" className="max-w-xs h-12 bg-white/5 border-white/10 rounded-xl" />
-                
-                <Select value={newTechCategory} onValueChange={(v) => setNewTechCategory(v as TechItem['category'])}>
-                  <SelectTrigger className="w-[180px] h-12 bg-white/5 border-white/10 rounded-xl">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent className="glass border-white/10">
-                    <SelectItem value="Web">Web</SelectItem>
-                    <SelectItem value="Mobile">Mobile</SelectItem>
-                    <SelectItem value="Backend">Backend</SelectItem>
-                    <SelectItem value="Cloud">Cloud</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+                <div>
+                  <h3 className="text-2xl font-headline font-bold mb-2">Manage Tech Stack</h3>
+                  <p className="text-sm text-muted-foreground mb-6">Type a tool name, and I'll automatically detect its icon.</p>
+                </div>
+                <div className="flex gap-4 items-center w-full md:w-auto">
+                   <div className="relative flex-grow md:w-64">
+                      <Input 
+                        placeholder="Tool Name (e.g. Next.js)" 
+                        value={techInput}
+                        onChange={(e) => setTechInput(e.target.value)}
+                        className="h-12 pl-12 bg-white/5 border-white/10 rounded-xl" 
+                      />
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-primary">
+                        {getTechIcon(techInput, 20)}
+                      </div>
+                   </div>
+                   
+                   <Select value={newTechCategory} onValueChange={(v) => setNewTechCategory(v as TechItem['category'])}>
+                     <SelectTrigger className="w-[180px] h-12 bg-white/5 border-white/10 rounded-xl">
+                       <SelectValue placeholder="Category" />
+                     </SelectTrigger>
+                     <SelectContent className="glass border-white/10">
+                       <SelectItem value="Web">Web</SelectItem>
+                       <SelectItem value="Mobile">Mobile</SelectItem>
+                       <SelectItem value="Backend">Backend</SelectItem>
+                       <SelectItem value="Cloud">Cloud</SelectItem>
+                     </SelectContent>
+                   </Select>
 
-                <Button onClick={() => {
-                  const n = (document.getElementById('tech-name') as HTMLInputElement).value;
-                  addTech(n, newTechCategory);
-                  (document.getElementById('tech-name') as HTMLInputElement).value = '';
-                }} className="h-12 px-8 rounded-xl bg-primary">Add Tool</Button>
+                   <Button onClick={addTech} className="h-12 px-8 rounded-xl bg-primary">Add Tool</Button>
+                </div>
               </div>
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {data.techStack.map(t => (
                   <div key={t.id} className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between group">
-                    <div>
-                      <p className="font-bold text-sm">{t.name}</p>
-                      <p className="text-[10px] text-primary uppercase font-bold tracking-widest">{t.category}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="text-primary">{getTechIcon(t.name, 18)}</div>
+                      <div>
+                        <p className="font-bold text-sm">{t.name}</p>
+                        <p className="text-[10px] text-primary uppercase font-bold tracking-widest">{t.category}</p>
+                      </div>
                     </div>
                     <Button size="icon" variant="ghost" className="opacity-0 group-hover:opacity-100 h-8 w-8 text-destructive" onClick={() => removeTech(t.id)}>
                       <Trash2 size={14}/>
@@ -259,7 +269,6 @@ export default function DashAdminPage() {
             </div>
           </TabsContent>
 
-          {/* Contact Tab */}
           <TabsContent value="contact">
             <div className="glass p-10 rounded-[2.5rem] border-white/10 space-y-6">
               <h3 className="text-2xl font-headline font-bold">Contact Details</h3>
@@ -285,7 +294,6 @@ export default function DashAdminPage() {
           </TabsContent>
         </Tabs>
 
-        {/* Project Modal */}
         {isAddingProject && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6">
              <div className="glass w-full max-w-xl p-10 rounded-[2.5rem] border-white/10 max-h-[90vh] overflow-y-auto">

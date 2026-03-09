@@ -3,19 +3,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Code, Smartphone, Database, Cpu, Atom, Zap, Server, Layers } from 'lucide-react';
 import { getPortfolioData, PortfolioData, TechItem } from '@/lib/portfolio-store';
-
-const getIcon = (name: string) => {
-  const n = name.toLowerCase();
-  if (n.includes('react') || n.includes('next')) return <Atom />;
-  if (n.includes('flutter') || n.includes('dart')) return <Smartphone />;
-  if (n.includes('node') || n.includes('backend')) return <Server />;
-  if (n.includes('firebase') || n.includes('cloud')) return <Database />;
-  if (n.includes('tailwind') || n.includes('css')) return <Layers />;
-  if (n.includes('js') || n.includes('code')) return <Code />;
-  return <Zap />;
-};
+import { getTechIcon } from '@/lib/icons';
 
 export function TechStack() {
   const [data, setData] = useState<PortfolioData | null>(null);
@@ -49,7 +38,7 @@ export function TechStack() {
               className="glass p-8 rounded-3xl border-white/5 text-center group transition-all hover:bg-primary hover:text-white"
             >
               <div className="mb-4 flex justify-center text-primary group-hover:text-white transition-colors">
-                {getIcon(item.name)}
+                {getTechIcon(item.name, 32)}
               </div>
               <h4 className="font-bold mb-1">{item.name}</h4>
               <p className="text-xs text-muted-foreground group-hover:text-white/70 transition-colors uppercase tracking-widest font-bold">
