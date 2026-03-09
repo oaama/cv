@@ -89,7 +89,7 @@ const initialData: PortfolioData = {
   ],
   contact: {
     email: "angelo@technomedia.com",
-    whatsapp: "+20 123 456 7890",
+    whatsapp: "+20 112 757 0256",
     linkedin: "/in/angelos",
     github: "@angelos-dev"
   }
