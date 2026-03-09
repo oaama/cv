@@ -45,7 +45,7 @@ export interface PortfolioData {
   };
 }
 
-const STORAGE_KEY = 'apex_portfolio_complete_data_v2'; // Changed key to force update
+const STORAGE_KEY = 'apex_portfolio_complete_data_v3'; // Bumped version to force update
 
 const initialData: PortfolioData = {
   hero: {
@@ -88,7 +88,7 @@ const initialData: PortfolioData = {
     { id: '4', name: 'Firebase', category: 'Cloud' }
   ],
   contact: {
-    email: "angelo@technomedia.com",
+    email: "angluosr@gmail.com",
     whatsapp: "01127570256",
     linkedin: "https://www.linkedin.com/in/angluos-rezq-4405b221a?utm_source=share_via&utm_content=profile&utm_medium=member_android",
     github: "@oaama"
